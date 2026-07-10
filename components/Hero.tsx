@@ -1,0 +1,202 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+
+/**
+ * Hero - the pitch on the left, the container "manifest" card on the right.
+ * The card is styled as the packaged .carto artifact: an identity header
+ * (commit + digest), the layers it carries, and a blast-radius readout - the
+ * payoff a visitor is about to get for their own repo.
+ */
+export function Hero() {
+  const [copied, setCopied] = useState(false);
+
+  function copyInstall() {
+    navigator.clipboard?.writeText("npm i -g carto-md").then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    });
+  }
+
+  return (
+    <section id="container" className="relative overflow-hidden border-b border-line">
+      <div aria-hidden className="bp-grid pointer-events-none absolute inset-0 opacity-60" />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -left-40 top-0 h-[420px] w-[620px] rounded-full opacity-70 blur-3xl"
+        style={{ background: "radial-gradient(closest-side, var(--color-route-soft), transparent)" }}
+      />
+
+      <div className="shell relative grid gap-14 py-20 md:grid-cols-[1.05fr_0.95fr] md:items-center md:py-28">
+        {/* ---- left: the pitch ---- */}
+        <div className="rise">
+          <span className="inline-flex items-center gap-2.5 border border-line bg-panel px-3 py-1.5 font-mono text-[0.72rem] tracking-[0.02em] text-ink-2">
+            <span className="h-1.5 w-1.5 bg-route softpulse" aria-hidden />
+            The portable AI container for your codebase
+          </span>
+
+          <h1 className="mt-8 max-w-2xl font-display font-medium text-ink [font-size:var(--text-display)] [letter-spacing:var(--text-display--letter-spacing)] [line-height:var(--text-display--line-height)]">
+            Package a repo once.
+            <br />
+            <span className="text-route">Every AI understands it.</span>
+          </h1>
+
+          <p className="mt-7 max-w-xl text-lg leading-relaxed text-ink-2">
+            Carto packs your whole codebase into one portable container -
+            architecture, dependencies, history, and safety context. Any AI
+            tool reads it in seconds instead of re-indexing from scratch, and
+            because the container knows how everything connects, it tells you{" "}
+            <span className="text-ink">what breaks before you change it.</span>
+          </p>
+
+          <div className="mt-9 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+            {/* primary CTA — the install command itself, in route blue */}
+            <div
+              id="install"
+              className="flex h-12 max-w-full items-stretch border border-route bg-route font-mono text-[0.82rem] text-paper sm:text-[0.9rem]"
+            >
+              <span aria-hidden className="flex items-center border-r border-paper/25 px-3 text-paper/70 sm:px-3.5">$</span>
+              <span className="flex items-center overflow-x-auto whitespace-nowrap px-3 sm:px-4">npm i -g carto-md</span>
+              <button
+                type="button"
+                onClick={copyInstall}
+                aria-label="Copy install command"
+                className="flex shrink-0 items-center border-l border-paper/25 px-3 text-paper/85 transition-colors hover:bg-route-strong hover:text-paper sm:px-4"
+              >
+                {copied ? "copied ✓" : "copy"}
+              </button>
+            </div>
+            <a
+              href="https://github.com/theanshsonkar/carto"
+              className="btn-secondary"
+            >
+              View on GitHub
+            </a>
+          </div>
+
+          <p className="mt-3 font-mono text-[0.72rem] text-ink-3">
+            then <span className="text-ink">cd your-repo &amp;&amp; carto init</span> packages it
+          </p>
+
+          <p className="mt-5 font-mono text-[0.72rem] uppercase tracking-[0.14em] text-ink-3">
+            Free · MIT · One SQLite file · No cloud · No telemetry
+          </p>
+        </div>
+
+        {/* ---- right: the container manifest card ---- */}
+        <div className="rise" style={{ animationDelay: "0.12s" }}>
+          <ManifestCard />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ManifestCard() {
+  const [count, setCount] = useState(0);
+  const footRef = useRef<HTMLDivElement>(null);
+  const ran = useRef(false);
+
+  useEffect(() => {
+    const el = footRef.current;
+    if (!el) return;
+    const TARGET = 88;
+    const DURATION = 900;
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting && !ran.current) {
+            ran.current = true;
+            const start = performance.now();
+            const tick = (now: number) => {
+              const t = Math.min(1, (now - start) / DURATION);
+              // easeOutCubic for a snappy settle
+              const eased = 1 - Math.pow(1 - t, 3);
+              setCount(Math.round(eased * TARGET));
+              if (t < 1) requestAnimationFrame(tick);
+            };
+            requestAnimationFrame(tick);
+            io.disconnect();
+          }
+        });
+      },
+      { threshold: 0.6 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div className="relative">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -inset-4 rounded-full opacity-60 blur-3xl"
+        style={{ background: "radial-gradient(closest-side, var(--color-route-soft), transparent)" }}
+      />
+      <div className="group/card relative border border-ink bg-panel shadow-hard transition-[transform,box-shadow] duration-200 ease-out hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-hard-lg">
+        {/* header - container identity */}
+        <div className="flex items-center justify-between border-b border-line px-4 py-3">
+          <div className="flex items-center gap-2 font-mono text-[0.72rem] text-ink-2">
+            <span className="h-2 w-2 rounded-full bg-safe softpulse" aria-hidden />
+            .carto / container
+          </div>
+          <span className="flex items-center gap-1.5 font-mono text-[0.68rem] text-safe">
+            <span aria-hidden>✓</span> digest verified
+          </span>
+        </div>
+
+        {/* identity rows */}
+        <dl className="grid grid-cols-2 gap-px border-b border-line bg-line">
+          {[
+            ["source", "supabase@a3f9c1"],
+            ["files", "6,358"],
+            ["digest", "sha256:9e4b…c07"],
+            ["anci", "v0.1 · reproducible"],
+          ].map(([k, v]) => (
+            <div key={k} className="bg-panel px-4 py-2.5">
+              <dt className="font-mono text-[0.62rem] uppercase tracking-[0.12em] text-ink-3">{k}</dt>
+              <dd className="mt-0.5 font-mono text-[0.8rem] text-ink">{v}</dd>
+            </div>
+          ))}
+        </dl>
+
+        {/* layers it carries - stagger in, highlight on hover */}
+        <div className="space-y-px bg-line">
+          {LAYERS.map(([name, desc], i) => (
+            <div
+              key={name}
+              className="group/row flex items-center gap-3 bg-panel px-4 py-2.5 rise transition-colors duration-150 hover:bg-panel-2"
+              style={{ animationDelay: `${0.35 + i * 0.08}s` }}
+            >
+              <span className="font-mono text-[0.62rem] text-ink-3">{String(i + 1).padStart(2, "0")}</span>
+              <span className="w-24 font-display text-sm font-semibold text-ink">{name}</span>
+              <span className="flex-1 truncate font-mono text-[0.72rem] text-ink-2">{desc}</span>
+              <span
+                className="h-1.5 w-1.5 bg-route transition-transform duration-150 group-hover/row:scale-[2.2]"
+                aria-hidden
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* blast readout footer - counts up when it scrolls into view */}
+        <div ref={footRef} className="flex items-center justify-between border-t border-line bg-signal-soft px-4 py-3">
+          <span className="font-mono text-[0.72rem] text-ink">
+            <span className="text-signal">◆</span> change <span className="font-semibold">session.ts</span>
+          </span>
+          <span className="font-mono text-[0.72rem] font-semibold text-signal">
+            {count} files break · P {(count / 100).toFixed(2)} · 2.7µs
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const LAYERS: [string, string][] = [
+  ["Structural", "imports · routes · models · domains"],
+  ["Episodic", "every decision & validated diff"],
+  ["Temporal", "snapshots · churn · drift"],
+  ["Semantic", "invariants & conventions"],
+  ["Procedural", "patterns mined from git"],
+];

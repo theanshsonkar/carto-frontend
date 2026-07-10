@@ -1,0 +1,207 @@
+@import "tailwindcss";
+
+/*
+  Carto - landing v2 design system.
+  Same visual language as the current site (engineering blueprint / cartography):
+  ink on warm bone-white, a dashed drafting grid, monospace eyebrow labels,
+  route-blue as the single map accent, signal-red only for "this could break".
+  New layout & copy, same palette + button language.
+*/
+
+@theme {
+  /* surfaces */
+  --color-paper: #f4f1e9;
+  --color-panel: #faf8f2;
+  --color-panel-2: #eeeade;
+
+  /* ink */
+  --color-ink: #15140e;
+  --color-ink-2: #5c5a4f;
+  --color-ink-3: #9b9788;
+
+  /* engineering grid lines */
+  --color-line: #d6d1c2;
+  --color-line-2: #e4dfd1;
+
+  /* danger - risk, drift, violations, "what breaks" */
+  --color-signal: #df2a1b;
+  --color-signal-soft: #f7d9d4;
+
+  /* the map - Carto's route/graph accent */
+  --color-route: #1f4fd6;
+  --color-route-soft: #dfe6f7;
+  --color-route-strong: #1745c6;
+  --color-route-ink: #0a1f5c;
+
+  /* safe/good */
+  --color-safe: #2c7a4c;
+  --color-safe-soft: #dbeadf;
+
+  /* night - for the full-bleed dark interludes */
+  --color-night: #100f0c;
+  --color-night-panel: #1a1813;
+  --color-night-line: #2c2a24;
+  --color-night-text: #ece8dc;
+  --color-night-muted: #989384;
+  --color-night-route: #7aa2f7;
+
+  /* type */
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* fluid display sizes */
+  --text-display: clamp(2.75rem, 6.5vw, 5.25rem);
+  --text-display--line-height: 0.98;
+  --text-display--letter-spacing: -0.03em;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+}
+
+/* ---- blueprint utilities ---------------------------------------------- */
+
+/* hard offset drop-shadow - the manifest-card chrome. Defined as named
+   utilities because Tailwind v4's arbitrary-value codegen mangles
+   var(--color-ink) inside shadow-[...] and produces invalid CSS. */
+@utility shadow-hard {
+  box-shadow: 8px 8px 0 0 var(--color-ink);
+}
+@utility shadow-hard-lg {
+  box-shadow: 11px 11px 0 0 var(--color-ink);
+}
+
+/* faint square grid - the drafting paper texture */
+@utility bp-grid {
+  background-image:
+    linear-gradient(to right, var(--color-line-2) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-line-2) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* dark grid - for the interlude/anchor blocks on ink background */
+@utility bp-grid-dark {
+  background-image:
+    linear-gradient(to right, var(--color-night-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-night-line) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* blue grid - for the full-bleed route-anchor block */
+@utility bp-grid-blue {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* monospace eyebrow: [ LABEL ] */
+@utility eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-ink-2);
+}
+
+/* the standard content gutter */
+@utility shell {
+  width: 100%;
+  max-width: 82rem;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+/* ---- button language (matches current site) --------------------------- */
+
+/* primary - solid route blue */
+@utility btn-primary {
+  display: inline-flex;
+  height: 3rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  border: 1px solid var(--color-route);
+  background: var(--color-route);
+  padding-inline: 1.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-paper);
+  transition: background-color 0.15s, border-color 0.15s;
+}
+.btn-primary:hover {
+  background: var(--color-route-strong);
+  border-color: var(--color-route-strong);
+}
+
+/* secondary - outline ink, fills on hover */
+@utility btn-secondary {
+  display: inline-flex;
+  height: 3rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  border: 1px solid var(--color-ink);
+  background: transparent;
+  padding-inline: 1.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-ink);
+  transition: background-color 0.15s, color 0.15s;
+}
+.btn-secondary:hover {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+
+/* ---- marquee (tool strip) --------------------------------------------- */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@utility animate-marquee {
+  animation: marquee var(--marquee-duration, 36s) linear infinite;
+}
+
+/* ---- reveal-on-scroll (CSS-only, staged via inline delay) ------------- */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@utility rise {
+  animation: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* soft pulse for the "live" status dot */
+@keyframes softpulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+@utility softpulse {
+  animation: softpulse 2s ease-in-out infinite;
+}
