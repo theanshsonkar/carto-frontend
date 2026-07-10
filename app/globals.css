@@ -57,7 +57,13 @@
 }
 
 @layer base {
+  html {
+    /* clip (not hidden) prevents horizontal overflow scroll without
+       breaking the sticky nav's positioning context */
+    overflow-x: clip;
+  }
   body {
+    overflow-x: clip;
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;

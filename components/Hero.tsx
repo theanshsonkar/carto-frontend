@@ -29,9 +29,9 @@ export function Hero() {
 
       <div className="shell relative grid gap-14 py-20 md:grid-cols-[1.05fr_0.95fr] md:items-center md:py-28">
         {/* ---- left: the pitch ---- */}
-        <div className="rise">
-          <span className="inline-flex items-center gap-2.5 border border-line bg-panel px-3 py-1.5 font-mono text-[0.72rem] tracking-[0.02em] text-ink-2">
-            <span className="h-1.5 w-1.5 bg-route softpulse" aria-hidden />
+        <div className="rise min-w-0">
+          <span className="inline-flex max-w-full items-center gap-2.5 border border-line bg-panel px-3 py-1.5 font-mono text-[0.72rem] tracking-[0.02em] text-ink-2">
+            <span className="h-1.5 w-1.5 shrink-0 bg-route softpulse" aria-hidden />
             The portable AI container for your codebase
           </span>
 
@@ -84,7 +84,7 @@ export function Hero() {
         </div>
 
         {/* ---- right: the container manifest card ---- */}
-        <div className="rise" style={{ animationDelay: "0.12s" }}>
+        <div className="rise min-w-0" style={{ animationDelay: "0.12s" }}>
           <ManifestCard />
         </div>
       </div>
@@ -133,14 +133,14 @@ function ManifestCard() {
         className="pointer-events-none absolute -inset-4 rounded-full opacity-60 blur-3xl"
         style={{ background: "radial-gradient(closest-side, var(--color-route-soft), transparent)" }}
       />
-      <div className="group/card relative border border-ink bg-panel shadow-hard transition-[transform,box-shadow] duration-200 ease-out hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-hard-lg">
+      <div className="group/card relative overflow-hidden border border-ink bg-panel shadow-hard transition-[transform,box-shadow] duration-200 ease-out hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-hard-lg">
         {/* header - container identity */}
-        <div className="flex items-center justify-between border-b border-line px-4 py-3">
-          <div className="flex items-center gap-2 font-mono text-[0.72rem] text-ink-2">
-            <span className="h-2 w-2 rounded-full bg-safe softpulse" aria-hidden />
-            .carto / container
+        <div className="flex items-center justify-between gap-2 border-b border-line px-4 py-3">
+          <div className="flex min-w-0 items-center gap-2 font-mono text-[0.72rem] text-ink-2">
+            <span className="h-2 w-2 shrink-0 rounded-full bg-safe softpulse" aria-hidden />
+            <span className="truncate">.carto / container</span>
           </div>
-          <span className="flex items-center gap-1.5 font-mono text-[0.68rem] text-safe">
+          <span className="flex shrink-0 items-center gap-1.5 font-mono text-[0.68rem] text-safe">
             <span aria-hidden>✓</span> digest verified
           </span>
         </div>
@@ -153,9 +153,9 @@ function ManifestCard() {
             ["digest", "sha256:9e4b…c07"],
             ["anci", "v0.1 · reproducible"],
           ].map(([k, v]) => (
-            <div key={k} className="bg-panel px-4 py-2.5">
+            <div key={k} className="min-w-0 bg-panel px-4 py-2.5">
               <dt className="font-mono text-[0.62rem] uppercase tracking-[0.12em] text-ink-3">{k}</dt>
-              <dd className="mt-0.5 font-mono text-[0.8rem] text-ink">{v}</dd>
+              <dd className="mt-0.5 truncate font-mono text-[0.8rem] text-ink">{v}</dd>
             </div>
           ))}
         </dl>
@@ -168,9 +168,9 @@ function ManifestCard() {
               className="group/row flex items-center gap-3 bg-panel px-4 py-2.5 rise transition-colors duration-150 hover:bg-panel-2"
               style={{ animationDelay: `${0.35 + i * 0.08}s` }}
             >
-              <span className="font-mono text-[0.62rem] text-ink-3">{String(i + 1).padStart(2, "0")}</span>
-              <span className="w-24 font-display text-sm font-semibold text-ink">{name}</span>
-              <span className="flex-1 truncate font-mono text-[0.72rem] text-ink-2">{desc}</span>
+              <span className="shrink-0 font-mono text-[0.62rem] text-ink-3">{String(i + 1).padStart(2, "0")}</span>
+              <span className="w-20 shrink-0 font-display text-sm font-semibold text-ink sm:w-24">{name}</span>
+              <span className="min-w-0 flex-1 truncate font-mono text-[0.72rem] text-ink-2">{desc}</span>
               <span
                 className="h-1.5 w-1.5 bg-route transition-transform duration-150 group-hover/row:scale-[2.2]"
                 aria-hidden
@@ -180,7 +180,7 @@ function ManifestCard() {
         </div>
 
         {/* blast readout footer - counts up when it scrolls into view */}
-        <div ref={footRef} className="flex items-center justify-between border-t border-line bg-signal-soft px-4 py-3">
+        <div ref={footRef} className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 border-t border-line bg-signal-soft px-4 py-3">
           <span className="font-mono text-[0.72rem] text-ink">
             <span className="text-signal">◆</span> change <span className="font-semibold">session.ts</span>
           </span>
