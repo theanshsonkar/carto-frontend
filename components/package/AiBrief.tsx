@@ -47,7 +47,7 @@ export function AiBrief({ p }: { p: Passport }) {
 
       <div className="grid border border-ink shadow-hard-lg md:grid-cols-2">
         {/* ---- left: the pitch + steps ---- */}
-        <div className="flex flex-col justify-between gap-6 bg-panel p-6 md:p-8">
+        <div className="flex min-w-0 flex-col justify-between gap-6 bg-panel p-6 md:p-8">
           <div>
             <h3 className="font-display text-2xl font-semibold leading-tight text-ink md:text-3xl">
               Give this boarding pass to your AI.
@@ -79,7 +79,7 @@ export function AiBrief({ p }: { p: Passport }) {
         </div>
 
         {/* ---- right: the document card ---- */}
-        <div className="flex flex-col border-t border-ink bg-panel-2 p-6 md:border-l md:border-t-0 md:p-8">
+        <div className="flex min-w-0 flex-col border-t border-ink bg-panel-2 p-6 md:border-l md:border-t-0 md:p-8">
           {/* file window */}
           <div className="flex flex-1 flex-col overflow-hidden border border-ink bg-paper shadow-hard">
             {/* title bar */}

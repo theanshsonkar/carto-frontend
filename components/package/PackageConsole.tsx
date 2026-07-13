@@ -32,7 +32,7 @@ export function PackageConsole() {
           go(url);
         }}
       >
-        <div className="flex flex-col gap-3 sm:flex-row">
+        <div className="flex flex-col gap-3 md:flex-row">
           <div className="flex h-14 flex-1 items-stretch border border-ink bg-panel shadow-hard transition-shadow focus-within:shadow-hard-lg">
             <span aria-hidden className="flex items-center border-r border-line px-4 font-mono text-[0.8rem] text-ink-3">
               github.com/

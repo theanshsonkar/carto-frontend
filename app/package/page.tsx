@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { PackageConsole } from "@/components/package/PackageConsole";
+import { PackageFaq } from "@/components/package/PackageFaq";
 
 export const metadata: Metadata = {
   title: "Package a repo · Carto",
@@ -97,6 +98,8 @@ export default function PackagePage() {
             </div>
           </div>
         </section>
+
+        <PackageFaq />
       </main>
       <Footer />
     </>
