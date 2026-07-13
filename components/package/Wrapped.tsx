@@ -163,16 +163,21 @@ function FindingTile({ f, className = "", big = false, bold = false }: { f: Find
 
 function ShareRow({ p }: { p: Passport }) {
   const a = archetype(p);
+  // content-versioned token: makes X/Slack/iMessage treat this as a new URL and
+  // re-crawl the per-repo card instead of serving a stale cached preview. It
+  // only changes when the repo's content (digest) changes.
+  const ogv = p.digest.replace(/[^a-z0-9]/gi, "").slice(-8) || "1";
   const url = `${SITE_URL}/r?repo=${p.repo}`;
+  const shareUrl = `${url}&og=${ogv}`;
   const badge = `[![Carto boarding pass](${SITE_URL}/r.png?repo=${p.repo})](${url})`;
   const worst = p.findings.find((x) => x.tone === "signal") ?? p.findings[0];
   const tweet = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
     `${p.repo} is ${a.title} ${a.emoji}: ${worst.big} ${worst.text}. found by carto:`
-  )}&url=${encodeURIComponent(url)}`;
+  )}&url=${encodeURIComponent(shareUrl)}`;
 
   return (
     <>
-      <CopyChip label="Copy link" value={url} />
+      <CopyChip label="Copy link" value={shareUrl} />
       <CopyChip label="README badge" value={badge} />
       <a href={tweet} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center border border-ink bg-panel px-3 py-2.5 font-mono text-[0.74rem] text-ink shadow-hard transition-colors hover:bg-ink hover:text-paper">
         Share on X ↗
