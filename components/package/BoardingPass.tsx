@@ -2,14 +2,14 @@
 
 import { QRCodeSVG } from "qrcode.react";
 import { ContainerMark } from "@/components/ui/Logo";
-import { archetype, concentration, type Passport } from "./passport-data";
+import { archetype, concentration, SITE_URL, type Passport } from "./passport-data";
 import { CountUp } from "./CountUp";
 import { Scramble } from "./Scramble";
 import { SplitReveal } from "./SplitReveal";
 import { InspectionStamp } from "./InspectionStamp";
 
 /** Where the pass's QR code points — the Carto landing page. */
-const LANDING_URL = "https://trycarto.com";
+const LANDING_URL = SITE_URL;
 
 /**
  * BoardingPass — the shareable hero, built as an actual BOARDING PASS in Carto's
@@ -153,14 +153,14 @@ export function BoardingPass({ p }: { p: Passport }) {
             href={LANDING_URL}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Scan or tap to open trycarto.com"
+            aria-label="Scan or tap to open Carto"
             className="relative mt-auto flex items-end gap-3"
           >
             <span className="shrink-0 border border-ink bg-paper p-1.5 leading-[0] shadow-hard transition-transform hover:-translate-y-0.5">
               <QRCodeSVG value={LANDING_URL} size={64} bgColor="#f4f1e9" fgColor="#15140e" level="M" marginSize={0} />
             </span>
             <div className="min-w-0 flex-1">
-              <div className="font-mono text-[0.5rem] uppercase tracking-[0.14em] text-paper/70">scan → trycarto.com</div>
+              <div className="font-mono text-[0.5rem] uppercase tracking-[0.14em] text-paper/70">scan → carto</div>
               <div className="mt-1 font-mono text-[0.82rem] tracking-[0.18em]">
                 <Scramble text={passportNo(p)} chars="code" />
               </div>

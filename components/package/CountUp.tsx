@@ -58,6 +58,10 @@ export function CountUp({
         once: true,
         onEnter: () => tween.play(),
       });
+      // Fire immediately if the element is already within view on mount —
+      // ScrollTrigger's onEnter only fires on an actual crossing, so anything
+      // already past the start line would otherwise stay frozen at 0.
+      if (el.getBoundingClientRect().top < window.innerHeight * 0.92) tween.play();
       return () => {
         st.kill();
         tween.kill();

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { archetype, baseName, type Finding, type Passport } from "./passport-data";
+import { archetype, baseName, SITE_URL, type Finding, type Passport } from "./passport-data";
 import { CountUp } from "./CountUp";
 
 /**
@@ -163,8 +163,8 @@ function FindingTile({ f, className = "", big = false, bold = false }: { f: Find
 
 function ShareRow({ p }: { p: Passport }) {
   const a = archetype(p);
-  const url = `https://trycarto.com/r?repo=${p.repo}`;
-  const badge = `[![Carto Passport](https://trycarto.com/badge/${p.repo}.svg)](${url})`;
+  const url = `${SITE_URL}/r?repo=${p.repo}`;
+  const badge = `[![Carto boarding pass](${SITE_URL}/r.png?repo=${p.repo})](${url})`;
   const worst = p.findings.find((x) => x.tone === "signal") ?? p.findings[0];
   const tweet = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
     `${p.repo} is ${a.title} ${a.emoji}: ${worst.big} ${worst.text}. found by carto:`
