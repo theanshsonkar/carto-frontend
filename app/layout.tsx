@@ -20,30 +20,30 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://trycarto.theanshsonkar.workers.dev"),
-  title: "Carto: the portable AI container for your codebase",
+  title: "Carto: package a repo once, every AI knows what breaks",
   description:
-    "Package a repo once. Every AI tool understands it in seconds and knows what breaks before it changes anything. One SQLite file. No cloud. MIT.",
+    "Your agent can change 40 files before you understand the first one. Carto packs your repo into one portable container, so any AI tool knows what breaks before the diff lands. One SQLite file. No cloud. MIT.",
   openGraph: {
     type: "website",
     url: "/",
     siteName: "Carto",
-    title: "Carto: the portable AI container for your codebase",
+    title: "Carto: package a repo once, every AI knows what breaks",
     description:
-      "Package a repo once. Every AI tool understands it in seconds and knows what breaks before it changes anything. One SQLite file. No cloud. MIT.",
+      "Your agent can change 40 files before you understand the first one. Carto packs your repo into one portable container, so any AI tool knows what breaks before the diff lands. One SQLite file. No cloud. MIT.",
     images: [
       {
         url: "/og.png",
         width: 1200,
         height: 630,
-        alt: "Carto: package a repo once, every AI understands it.",
+        alt: "Carto: package a repo once, every AI knows what breaks before it changes anything.",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Carto: the portable AI container for your codebase",
+    title: "Carto: package a repo once, every AI knows what breaks",
     description:
-      "Package a repo once. Every AI tool understands it in seconds and knows what breaks before it changes anything. One SQLite file. No cloud. MIT.",
+      "Your agent can change 40 files before you understand the first one. Carto packs your repo into one portable container, so any AI tool knows what breaks before the diff lands. One SQLite file. No cloud. MIT.",
     images: ["/og.png"],
   },
 };
