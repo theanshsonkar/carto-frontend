@@ -9,20 +9,19 @@ import { BoardingPass } from "@/components/package/BoardingPass";
 import { AiBrief } from "@/components/package/AiBrief";
 import { PassportFaq } from "@/components/package/PassportFaq";
 import { PassportStage } from "@/components/package/PassportStage";
-import { resolvePassport, type Passport } from "@/components/package/passport-data";
+import { resolvePassportAsync, type Passport } from "@/components/package/passport-data";
 
 type Phase = "loading" | "scanning" | "done" | "empty";
 type Line = { text: string; tone: "muted" | "route" | "safe" };
 
-function steps(p: Passport): Line[] {
+function steps(repo: string): Line[] {
   return [
-    { text: `$ carto package ${p.repo}`, tone: "muted" },
-    { text: `→ cloning @ ${p.commit}`, tone: "route" },
-    { text: `→ parsing ${p.files.toLocaleString()} files`, tone: "route" },
-    { text: `→ mapping ${p.edges.toLocaleString()} imports`, tone: "route" },
-    { text: `→ detecting ${p.domainsCount} domains`, tone: "route" },
+    { text: `$ carto package ${repo}`, tone: "muted" },
+    { text: `→ cloning repository`, tone: "route" },
+    { text: `→ parsing files`, tone: "route" },
+    { text: `→ mapping imports`, tone: "route" },
+    { text: `→ detecting domains`, tone: "route" },
     { text: `→ computing blast radius`, tone: "route" },
-    { text: `✓ boarding pass ready`, tone: "safe" },
   ];
 }
 
@@ -39,23 +38,43 @@ export default function ResultPage() {
       setPhase("empty");
       return;
     }
-    const p = resolvePassport(repo);
-    setPassport(p);
     setPhase("scanning");
+    let cancelled = false;
 
-    const seq = steps(p);
+    // Animate the intermediate parse lines while the real backend works.
+    const seq = steps(repo);
     seq.forEach((s, i) => {
       const t = setTimeout(() => {
-        setLines((prev) => [...prev, s]);
-        if (i === seq.length - 1) {
-          const d = setTimeout(() => setPhase("done"), 500);
-          timers.current.push(d);
-        }
+        if (!cancelled) setLines((prev) => [...prev, s]);
       }, 300 + i * 320);
       timers.current.push(t);
     });
 
-    return () => timers.current.forEach(clearTimeout);
+    // Fetch the REAL cached passport (polls a first-time parse, falls back to
+    // the generator on error/timeout so the page always resolves).
+    resolvePassportAsync(repo, {
+      onRunning: () => {
+        if (cancelled) return;
+        setLines((prev) =>
+          prev.some((l) => l.text.includes("first parse"))
+            ? prev
+            : [...prev, { text: "→ first parse of this repo — hang tight (~1 min)…", tone: "muted" }]
+        );
+      },
+    }).then(({ passport }) => {
+      if (cancelled) return;
+      setPassport(passport);
+      setLines((prev) => [...prev, { text: `✓ boarding pass ready`, tone: "safe" }]);
+      const d = setTimeout(() => {
+        if (!cancelled) setPhase("done");
+      }, 600);
+      timers.current.push(d);
+    });
+
+    return () => {
+      cancelled = true;
+      timers.current.forEach(clearTimeout);
+    };
   }, []);
 
   return (

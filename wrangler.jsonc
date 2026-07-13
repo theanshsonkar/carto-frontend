@@ -6,7 +6,7 @@
     "directory": "./out",
     "binding": "ASSETS",
     "not_found_handling": "404-page",
-    "run_worker_first": ["/r", "/r.png"]
+    "run_worker_first": ["/r", "/r.png", "/api/passport"]
   },
   "rules": [{ "type": "Data", "globs": ["**/*.ttf"], "fallthrough": true }]
 }

@@ -269,7 +269,7 @@ export function scoreCard(core: PassportCore): ScoreCard {
 }
 
 /** Attach derived findings + computed grade to a core → a complete Passport. */
-function finalize(core: PassportCore): Passport {
+export function finalize(core: PassportCore): Passport {
   const score = scoreCard(core);
   // The rubric is the single source of truth for health/grade.
   const scored: PassportCore = { ...core, health: score.health, grade: score.grade };
@@ -506,6 +506,59 @@ export function normalizeRepo(input: string): string | null {
   const bare = s.match(/^([\w.-]+)\/([\w.-]+)$/);
   if (bare) return `${bare[1]}/${bare[2]}`;
   return null;
+}
+
+/* ------------------------------------------------------------------ */
+/* async backend resolver — fetches the real cached passport            */
+/* ------------------------------------------------------------------ */
+
+/** Endpoint served same-origin by the Cloudflare Worker (signs → AWS). */
+const PASSPORT_API = "/api/passport";
+
+export type PassportSource = "backend" | "fallback";
+export type ResolveOutcome = { source: PassportSource; passport: Passport };
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * resolvePassportAsync — the real thing. Fetches the cached PassportCore from
+ * the backend (via our same-origin Worker), polling while a first-time parse is
+ * in flight. Falls back to the deterministic generator/preset for any failure
+ * (uncached-and-slow past the timeout, oversized repo → error, network down),
+ * so the UI ALWAYS resolves to something renderable.
+ *
+ * `onRunning` fires each poll while the backend is still parsing, so the caller
+ * can show progress.
+ */
+export async function resolvePassportAsync(
+  repo: string,
+  opts: { pollMs?: number; timeoutMs?: number; onRunning?: () => void } = {}
+): Promise<ResolveOutcome> {
+  const normalized = normalizeRepo(repo) || repo;
+  const pollMs = opts.pollMs ?? 2500;
+  const deadline = Date.now() + (opts.timeoutMs ?? 150_000);
+
+  try {
+    while (Date.now() < deadline) {
+      const res = await fetch(`${PASSPORT_API}?repo=${encodeURIComponent(normalized)}`, {
+        headers: { accept: "application/json" },
+      });
+      const data = (await res.json().catch(() => null)) as
+        | { status?: string; core?: PassportCore; error?: string }
+        | null;
+
+      if (data?.status === "done" && data.core) {
+        return { source: "backend", passport: finalize(data.core) };
+      }
+      if (data?.status === "error" || (!data && res.status >= 500)) break; // give up → fallback
+      // status === "running" (or a transient hiccup) → keep polling
+      opts.onRunning?.();
+      await sleep(pollMs);
+    }
+  } catch {
+    /* network/other error → fall through to fallback */
+  }
+  return { source: "fallback", passport: resolvePassport(normalized) };
 }
 
 /** Look up a preset, or synthesize a plausible passport for any repo. */
