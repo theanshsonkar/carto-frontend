@@ -170,9 +170,8 @@ function ShareRow({ p }: { p: Passport }) {
   const url = `${SITE_URL}/r?repo=${p.repo}`;
   const shareUrl = `${url}&og=${ogv}`;
   const badge = `[![Carto boarding pass](${SITE_URL}/r.png?repo=${p.repo})](${url})`;
-  const worst = p.findings.find((x) => x.tone === "signal") ?? p.findings[0];
   const tweet = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-    `${p.repo} is ${a.title} ${a.emoji}: ${worst.big} ${worst.text}. found by carto:`
+    `Meet ${p.repo}: ${a.title}. One change here can break ${p.blast.count} files. Carto grades that before your AI ships it. Boarding pass ↓`
   )}&url=${encodeURIComponent(shareUrl)}`;
 
   return (
