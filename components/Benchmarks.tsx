@@ -20,7 +20,7 @@ export function Benchmarks() {
           </h2>
           <p className="mt-6 max-w-2xl text-[1rem] leading-relaxed text-ink-2">
             Fresh runs on real open-source repos (Apple M-series, 8 CPUs, 8 GB
-            RAM). Re-syncs are incremental - under a second on every repo here.
+            RAM). Re-syncs are incremental, under a second on every repo here.
           </p>
         </Reveal>
 

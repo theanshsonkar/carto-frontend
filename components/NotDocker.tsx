@@ -28,7 +28,7 @@ export function NotDocker() {
                 needs to reason about your code without re-reading it.
               </p>
               <p>
-                No daemon, no image pull, no virtual network - just a lightweight{" "}
+                No daemon, no image pull, no virtual network: just a lightweight{" "}
                 <span className="font-mono text-[0.9em] text-ink">.carto/</span>{" "}
                 folder: a local SQLite database plus an open ANCI map. It costs
                 nothing while idle, answers a blast-radius query in microseconds,

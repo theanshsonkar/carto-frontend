@@ -51,7 +51,7 @@ export function Footer() {
             © {new Date().getFullYear()} Carto · Built by Ansh Sonkar
           </p>
           <p className="font-mono text-[0.72rem] text-ink-3">
-            Your code changes. Carto knows. Every AI you use knows - and remembers.
+            Your code changes. Carto knows. Every AI you use knows, and remembers.
           </p>
         </div>
       </div>

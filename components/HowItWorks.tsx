@@ -5,17 +5,17 @@ const steps = [
   {
     verb: "Build",
     tag: "carto init",
-    body: "Parses your repo - imports, routes, models, domains, blast radius - and writes the container to .carto/. Auto-wires every AI tool it finds on your machine.",
+    body: "Parses your repo: imports, routes, models, domains, blast radius, and writes the container to .carto/. Auto-wires every AI tool it finds on your machine.",
   },
   {
     verb: "Run",
     tag: "carto serve",
-    body: "Serves the container over MCP - a compact core-10 plus parameterized families, so your AI spends its context on your code, not a tool menu. Auto-syncs on commit, checkout, merge & rebase - it stays fresh by itself. Decisions and drift persist in one SQLite file.",
+    body: "Serves the container over MCP: a compact core-10 plus parameterized families, so your AI spends its context on your code, not a tool menu. Auto-syncs on commit, checkout, merge & rebase. It stays fresh by itself. Decisions and drift persist in one SQLite file.",
   },
   {
     verb: "Attach",
     tag: "via MCP / ANCI",
-    body: "Cursor, Claude, Copilot, Kiro - every tool queries the same container instead of building its own index. Or read the ANCI file directly, no runtime.",
+    body: "Cursor, Claude, Copilot, Kiro: every tool queries the same container instead of building its own index. Or read the ANCI file directly, no runtime.",
   },
 ];
 

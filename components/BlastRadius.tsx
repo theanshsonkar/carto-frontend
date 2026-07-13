@@ -28,7 +28,7 @@ export function BlastRadius() {
           <p className="mt-6 max-w-xl text-[1rem] leading-relaxed text-night-muted">
             Search finds files that <em>mention</em> something. Blast radius
             finds files that <span className="text-night-text">break</span> when
-            you change something - transitively, over the real import graph. On
+            you change something, transitively, over the real import graph. On
             a 7,500-file repo, one query returns in about 3 microseconds thanks
             to a Roaring-Bitmap engine.
           </p>

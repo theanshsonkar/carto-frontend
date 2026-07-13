@@ -20,14 +20,14 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://trycarto.theanshsonkar.workers.dev"),
-  title: "Carto - the portable AI container for your codebase",
+  title: "Carto: the portable AI container for your codebase",
   description:
     "Package a repo once. Every AI tool understands it in seconds and knows what breaks before it changes anything. One SQLite file. No cloud. MIT.",
   openGraph: {
     type: "website",
     url: "/",
     siteName: "Carto",
-    title: "Carto - the portable AI container for your codebase",
+    title: "Carto: the portable AI container for your codebase",
     description:
       "Package a repo once. Every AI tool understands it in seconds and knows what breaks before it changes anything. One SQLite file. No cloud. MIT.",
     images: [
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Carto - the portable AI container for your codebase",
+    title: "Carto: the portable AI container for your codebase",
     description:
       "Package a repo once. Every AI tool understands it in seconds and knows what breaks before it changes anything. One SQLite file. No cloud. MIT.",
     images: ["/og.png"],

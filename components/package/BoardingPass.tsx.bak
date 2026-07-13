@@ -1,0 +1,231 @@
+"use client";
+
+import { QRCodeSVG } from "qrcode.react";
+import { ContainerMark } from "@/components/ui/Logo";
+import { archetype, concentration, type Passport } from "./passport-data";
+import { CountUp } from "./CountUp";
+import { Scramble } from "./Scramble";
+import { SplitReveal } from "./SplitReveal";
+import { InspectionStamp } from "./InspectionStamp";
+
+/** Where the pass's QR code points — the Carto landing page. */
+const LANDING_URL = "https://trycarto.com";
+
+/**
+ * BoardingPass — the shareable hero, built as a machine-readable PASSPORT in
+ * Carto's blueprint language. A blue issuing stub (barcode + pass no.), a
+ * guilloché-printed data page with passport-style fields, ONE dominant stat
+ * (single-domain concentration), a rotated inspection stamp (archetype +
+ * grade), and an OCR-B machine-readable zone that encodes the digest — the
+ * literal expression of Carto's "verifiable, digest-stamped container".
+ */
+export function BoardingPass({ p }: { p: Passport }) {
+  const a = archetype(p);
+  const c = concentration(p);
+  const [owner, name] = p.repo.split("/");
+  const gradeTone = p.health >= 85 ? "text-safe" : p.health >= 72 ? "text-route" : "text-signal";
+  const riskTone = p.risk <= 0.3 ? "text-safe" : p.risk <= 0.45 ? "text-route" : "text-signal";
+  const stampTone = p.health >= 85 ? "text-safe" : p.health >= 72 ? "text-route" : "text-signal";
+  const primaryLang = p.languages[0]?.name ?? p.stack[0] ?? "—";
+  const [before, after] = p.reindexTax.split("→").map((s) => s.trim());
+
+  return (
+    <div className="relative mx-auto w-full max-w-[1280px]">
+      {/* ---- perforation seam (desktop) ---- */}
+      {/* dashed tear line down the stub/page boundary */}
+      <span
+        aria-hidden
+        className="absolute left-[248px] top-[10px] bottom-[10px] z-10 hidden w-0 -translate-x-1/2 border-l-2 border-dashed border-ink/45 md:block"
+      />
+      {/* full-circle ticket notches straddling the seam at top & bottom */}
+      <span
+        aria-hidden
+        className="absolute left-[248px] top-[-9px] z-20 hidden h-[18px] w-[18px] -translate-x-1/2 rounded-full border border-ink bg-paper md:block"
+      />
+      <span
+        aria-hidden
+        className="absolute left-[248px] bottom-[-9px] z-20 hidden h-[18px] w-[18px] -translate-x-1/2 rounded-full border border-ink bg-paper md:block"
+      />
+
+      <div className="flex flex-col overflow-hidden border border-ink bg-panel shadow-hard-lg md:flex-row">
+        {/* ============================ ISSUING STUB ============================ */}
+        <div className="relative flex shrink-0 flex-col justify-between overflow-hidden bg-route p-5 text-paper md:w-[248px]">
+          <div aria-hidden className="bp-guilloche-blue pointer-events-none absolute inset-0 opacity-70" />
+
+          <div className="relative flex items-center gap-2">
+            <ContainerMark />
+            <span className="font-mono text-[0.66rem] font-semibold uppercase leading-tight tracking-[0.16em]">
+              Carto<br />Container Authority
+            </span>
+          </div>
+
+          <div className="relative mt-5">
+            <Field label="type" value="P·CTO" light />
+            <Field label="class" value={a.title.replace(/^THE /, "")} light className="mt-3" />
+          </div>
+
+          <div className="relative mt-5">
+            <div className="flex items-end gap-3">
+              {/* scannable QR → carto landing page */}
+              <a
+                href={LANDING_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Scan or tap to open trycarto.com"
+                className="shrink-0 border border-ink bg-paper p-1.5 leading-[0] shadow-hard transition-transform hover:-translate-y-0.5"
+              >
+                <QRCodeSVG value={LANDING_URL} size={72} bgColor="#f4f1e9" fgColor="#15140e" level="M" marginSize={0} />
+              </a>
+              <div className="min-w-0 flex-1">
+                <div className="font-mono text-[0.5rem] uppercase tracking-[0.14em] text-paper/70">
+                  scan → trycarto.com
+                </div>
+                <div className="mt-1 font-mono text-[0.9rem] tracking-[0.2em]">
+                  <Scramble text={passportNo(p)} chars="code" />
+                </div>
+                <div className="mt-1 truncate font-mono text-[0.5rem] uppercase tracking-[0.14em] text-paper/70">
+                  digest · <Scramble text={p.digest} chars="hex" duration={1.3} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ============================= DATA PAGE ============================= */}
+        <div className="relative min-w-0 flex-1 overflow-hidden">
+          <div aria-hidden className="bp-guilloche pointer-events-none absolute inset-0 opacity-[0.5]" />
+          <span aria-hidden className="bp-sheen pointer-events-none absolute inset-0" />
+
+          {/* inspection stamp — archetype + grade, drawn on as it lands */}
+          <InspectionStamp grade={p.grade} title={a.title.replace(/^THE /, "")} toneClass={stampTone} />
+
+          <div className="relative flex flex-col gap-5 p-6 md:p-7">
+            {/* header line */}
+            <div className="flex items-baseline gap-3 border-b border-ink/15 pb-3">
+              <SplitReveal className="font-display text-lg font-semibold tracking-tight text-ink">PASSPORT</SplitReveal>
+              <span className="font-mono text-[0.66rem] uppercase tracking-[0.18em] text-ink-3">/ container · {a.emoji}</span>
+            </div>
+
+            {/* passport fields */}
+            <div className="grid max-w-[62%] grid-cols-2 gap-x-6 gap-y-3.5 md:max-w-[68%]">
+              <Field label="repository / bearer" value={`${owner}/`} sub={name} />
+              <Field label="nationality" value={primaryLang} />
+              <Field label="source ref" value={`@${p.commit}`} />
+              <Field label="authority" value="carto engine · v4" />
+            </div>
+
+            {/* dominant stat — single-domain concentration (a real signal) */}
+            <div className="mt-1 flex items-end justify-between gap-6 border-t border-ink/15 pt-4">
+              <div>
+                <div className="font-mono text-[0.62rem] uppercase tracking-[0.16em] text-ink-3">
+                  single-domain concentration
+                </div>
+                <div className="flex items-end gap-3">
+                  <div className={`font-display text-[clamp(3.4rem,9vw,6rem)] font-semibold leading-[0.85] ${c.pct >= 70 ? "text-signal" : "text-route"}`}>
+                    <CountUp value={c.pct} />
+                    <span className="align-top text-[0.4em] font-medium">%</span>
+                  </div>
+                  <div className="mb-2 min-w-0">
+                    <div className="font-mono text-[0.72rem] uppercase tracking-[0.1em] text-ink">
+                      in {c.name}
+                    </div>
+                    <div className="font-mono text-[0.66rem] text-ink-3">
+                      {c.files.toLocaleString()} of {p.files.toLocaleString()} files
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* mini stat trio */}
+              <div className="hidden shrink-0 gap-6 sm:flex">
+                <Stat label="blast radius" value={<CountUp value={p.blast.count} />} tone="text-signal" />
+                <Stat label="cross-domain" value={<CountUp value={p.crossDomain} format={(n) => Math.round(n).toLocaleString()} />} tone="text-signal" />
+                <Stat label="p(incident)" value={<CountUp value={p.risk} decimals={2} />} tone={riskTone} />
+              </div>
+            </div>
+
+            {/* before → after strip (Carto's pitch, kept slim) */}
+            <div className="flex items-center gap-3 border-t border-ink/15 pt-3 font-mono text-[0.66rem] text-ink-3">
+              <span className="text-ink">
+                {p.files.toLocaleString()} files / session
+              </span>
+              <span aria-hidden className="flex-1 border-t border-dashed border-ink/30" />
+              <span className="border border-ink bg-route px-2 py-0.5 text-paper">carto reads 1 map · {after}</span>
+            </div>
+
+            {/* machine-readable zone */}
+            <div className="mrz mt-1 border-t border-dashed border-ink/40 bg-panel-2/60 px-3 py-2 text-[0.66rem] leading-[1.35] text-ink-2">
+              <div>
+                <Scramble text={mrz1(owner, name)} chars="mrz" duration={1.4} />
+              </div>
+              <div>
+                <Scramble text={mrz2(p)} chars="mrz" duration={1.6} delay={0.15} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+
+function Field({
+  label,
+  value,
+  sub,
+  light = false,
+  className = "",
+}: {
+  label: string;
+  value: string;
+  sub?: string;
+  light?: boolean;
+  className?: string;
+}) {
+  return (
+    <div className={`min-w-0 ${className}`}>
+      <div className={`font-mono text-[0.56rem] uppercase tracking-[0.16em] ${light ? "text-paper/60" : "text-ink-3"}`}>
+        {label}
+      </div>
+      <div className={`truncate font-mono text-[0.9rem] font-medium tracking-wide ${light ? "text-paper" : "text-ink"}`} title={sub ? `${value}${sub}` : value}>
+        {value}
+        {sub && <span className={light ? "text-paper" : "text-ink"}>{sub}</span>}
+      </div>
+    </div>
+  );
+}
+
+function Stat({ label, value, tone }: { label: string; value: React.ReactNode; tone: string }) {
+  return (
+    <div>
+      <div className="font-mono text-[0.56rem] uppercase tracking-[0.14em] text-ink-3">{label}</div>
+      <div className={`mt-0.5 font-display text-2xl font-semibold leading-none ${tone}`}>{value}</div>
+    </div>
+  );
+}
+
+/** Deterministic passport number derived from repo + commit. */
+function passportNo(p: Passport): string {
+  let h = 0;
+  for (const ch of p.repo + p.commit) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  const s = h.toString(36).toUpperCase().padEnd(8, "0").slice(0, 8);
+  return `${s.slice(0, 4)}-${s.slice(4)}`;
+}
+
+/* ---- machine-readable zone (TD3-style, 44 cols) ---- */
+
+function pad(s: string, n = 44): string {
+  return (s + "<".repeat(n)).slice(0, n);
+}
+function clean(s: string): string {
+  return s.toUpperCase().replace(/[^A-Z0-9]/g, "<");
+}
+function mrz1(owner: string, name: string): string {
+  return pad(`PC<CTO<${clean(owner)}<<${clean(name)}`);
+}
+function mrz2(p: Passport): string {
+  const dg = clean(p.digest.replace("sha256:", "")).slice(0, 8);
+  return pad(`${dg}<${p.files}F<${p.domainsCount}D<${p.crossDomain}X<${clean(p.grade)}`);
+}

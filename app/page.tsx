@@ -2,10 +2,10 @@ import { Nav } from "@/components/Nav";
 import { Hero } from "@/components/Hero";
 import { ToolStrip } from "@/components/ToolStrip";
 import { Problem } from "@/components/Problem";
+import { VerifyGap } from "@/components/VerifyGap";
 import { NotDocker } from "@/components/NotDocker";
 import { Inside } from "@/components/Inside";
 import { BlastRadius } from "@/components/BlastRadius";
-import { Guardrail } from "@/components/Guardrail";
 import { Portable } from "@/components/Portable";
 import { HowItWorks } from "@/components/HowItWorks";
 import { Benchmarks } from "@/components/Benchmarks";
@@ -25,20 +25,20 @@ export default function Home() {
         <Hero />
         <ToolStrip />
 
-        <SectionLabel name="THE RE-INDEXING TAX" index={1} total={TOTAL} />
+        <SectionLabel name="THE VERIFY GAP" index={1} total={TOTAL} />
+        <VerifyGap />
+
+        <SectionLabel name="THE RE-INDEXING TAX" index={2} total={TOTAL} />
         <Problem />
 
         {/* slim clarification band - no section label */}
         <NotDocker />
 
-        <SectionLabel name="INSIDE THE CONTAINER" index={2} total={TOTAL} />
+        <SectionLabel name="INSIDE THE CONTAINER" index={3} total={TOTAL} />
         <Inside />
 
         {/* full-bleed dark anchor - no section label on purpose */}
         <BlastRadius />
-
-        <SectionLabel name="CONTEXT THAT PUSHES BACK" index={3} total={TOTAL} />
-        <Guardrail />
 
         <SectionLabel name="BUILD ONCE · PULL ANYWHERE" index={4} total={TOTAL} />
         <Portable />

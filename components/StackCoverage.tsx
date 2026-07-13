@@ -31,7 +31,7 @@ const MODELS = [
 const TOOLS: [string, string][] = [
   ["get_architecture · get_context", "orient in the repo; full context for one file"],
   ["impact", "blast radius / simulate / neighbors / data flow"],
-  ["validate_diff", "grade a proposed diff — risk + violations"],
+  ["validate_diff", "grade a proposed diff: risk + violations"],
   ["get_change_plan", "natural-language intent → files to touch"],
   ["memory", "search past decisions, logs, sessions"],
   ["history", "drift, hotspots, evolution, churn, health"],
@@ -111,7 +111,7 @@ export function StackCoverage() {
           {tab === "routers" && (
             <>
               <p className="mb-5 font-mono text-[0.72rem] uppercase tracking-[0.12em] text-ink-3">
-                Route detection - endpoints, methods & handlers
+                Route detection: endpoints, methods & handlers
               </p>
               <div className="flex flex-wrap gap-2.5">
                 {ROUTERS.map((r) => (
@@ -124,7 +124,7 @@ export function StackCoverage() {
           {tab === "models" && (
             <>
               <p className="mb-5 font-mono text-[0.72rem] uppercase tracking-[0.12em] text-ink-3">
-                Data-model extraction - schemas, tables & validators
+                Data-model extraction: schemas, tables & validators
               </p>
               <div className="flex flex-wrap gap-2.5">
                 {MODELS.map((m) => (
@@ -137,7 +137,7 @@ export function StackCoverage() {
           {tab === "tools" && (
             <>
               <p className="mb-5 font-mono text-[0.72rem] uppercase tracking-[0.12em] text-ink-3">
-                Tools your AI can call over MCP - core-10 plus families
+                Tools your AI can call over MCP: core-10 plus families
               </p>
               <div className="grid gap-px bg-line sm:grid-cols-2">
                 {TOOLS.map(([name, desc]) => (

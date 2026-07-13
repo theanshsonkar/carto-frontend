@@ -44,6 +44,8 @@
   --color-night-text: #ece8dc;
   --color-night-muted: #989384;
   --color-night-route: #7aa2f7;
+  --color-night-safe: #6cc08b;
+  --color-night-signal: #ff6a5a;
 
   /* type */
   --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
@@ -210,4 +212,141 @@
 }
 @utility softpulse {
   animation: softpulse 2s ease-in-out infinite;
+}
+
+/* ---- /package feature animations (additive; used only on the passport) --- */
+
+/* node pop-in for the dependency constellation */
+@keyframes popin {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@utility popin {
+  animation: popin 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* generic fade-in (edges, labels) */
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@utility fadein {
+  animation: fadein 0.6s ease-out both;
+}
+
+/* expanding blast ripple from the hottest node */
+@keyframes blastwave {
+  0% {
+    transform: scale(0.25);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.15);
+    opacity: 0;
+  }
+}
+@utility blastwave {
+  animation: blastwave 2.6s ease-out infinite;
+}
+
+/* scanline sweep for the packaging terminal */
+@keyframes scan {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+@utility scan {
+  animation: scan 2.2s linear infinite;
+}
+
+/* ---- passport document craft (additive; used only on /r passport) ------ */
+
+/* guilloché — the fine interference lattice printed on real passports &
+   banknotes. Built from layered repeating radial gradients whose rings beat
+   against each other to make a moiré. Ink-toned, very low opacity, so it
+   reads as security engraving under the data, never competes with it. */
+@utility bp-guilloche {
+  background-image:
+    repeating-radial-gradient(circle at 18% 30%, transparent 0 6px, color-mix(in srgb, var(--color-route) 22%, transparent) 6px 6.6px),
+    repeating-radial-gradient(circle at 82% 68%, transparent 0 7px, color-mix(in srgb, var(--color-ink) 16%, transparent) 7px 7.6px),
+    repeating-radial-gradient(circle at 55% 50%, transparent 0 9px, color-mix(in srgb, var(--color-route) 12%, transparent) 9px 9.5px);
+  background-size: 100% 100%;
+}
+
+/* guilloché on the dark blue stub — white filaments instead of ink */
+@utility bp-guilloche-blue {
+  background-image:
+    repeating-radial-gradient(circle at 30% 20%, transparent 0 5px, rgba(255, 255, 255, 0.14) 5px 5.6px),
+    repeating-radial-gradient(circle at 70% 80%, transparent 0 7px, rgba(255, 255, 255, 0.09) 7px 7.6px);
+}
+
+/* inspection stamp — the rotated immigration/customs mark slammed on the
+   data page. Double ring, ink or signal, slightly under-inked (opacity +
+   blend) so it feels pressed rather than printed. Rotation set inline. */
+@utility stamp {
+  border: 2px solid currentColor;
+  box-shadow: 0 0 0 2px transparent, inset 0 0 0 3px currentColor;
+  mix-blend-mode: multiply;
+  opacity: 0.82;
+}
+
+/* machine-readable zone — the OCR-B strip along a passport's bottom edge */
+@utility mrz {
+  font-family: var(--font-mono);
+  letter-spacing: 0.18em;
+  font-variant-ligatures: none;
+  word-break: break-all;
+}
+
+/* perforation — a dashed tear line with punched holes for the ticket seam */
+@utility perf-x {
+  background-image: radial-gradient(circle, var(--color-paper) 0 3px, transparent 3px);
+  background-size: 14px 14px;
+  background-position: center;
+  background-repeat: repeat-x;
+}
+
+/* the faint diagonal security sheen sweeping a laminated ID page */
+@utility bp-sheen {
+  background-image: linear-gradient(
+    115deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.5) 38%,
+    rgba(255, 255, 255, 0.72) 46%,
+    transparent 60%
+  );
+  mix-blend-mode: overlay;
+}
+
+/* one-shot stamp thud — the archetype mark lands as the passport resolves */
+@keyframes stampin {
+  0% {
+    opacity: 0;
+    transform: rotate(var(--stamp-rot, -8deg)) scale(1.9);
+  }
+  60% {
+    opacity: 0.95;
+    transform: rotate(var(--stamp-rot, -8deg)) scale(0.94);
+  }
+  100% {
+    opacity: 0.82;
+    transform: rotate(var(--stamp-rot, -8deg)) scale(1);
+  }
+}
+@utility stampin {
+  animation: stampin 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+  animation-delay: 0.45s;
 }

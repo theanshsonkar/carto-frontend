@@ -27,9 +27,9 @@ export function Trust() {
                 <div className="flex flex-1 items-start gap-4 p-6">
                   <span
                     aria-hidden
-                    className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center border border-ink bg-ink text-paper"
+                    className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center border border-ink bg-signal text-paper"
                   >
-                    ✓
+                    ✕
                   </span>
                   <div>
                     <h3 className="font-display text-base font-semibold text-ink">{t}</h3>

@@ -7,13 +7,13 @@ const layers = [
     n: "01",
     name: "Structural",
     tag: "the shape of the repo",
-    body: "Import graph, routes, models, and auto-detected domains - parsed once with tree-sitter across 17 languages.",
+    body: "Import graph, routes, models, and auto-detected domains, parsed once with tree-sitter across 17 languages.",
   },
   {
     n: "02",
     name: "Episodic",
     tag: "what was decided",
-    body: "Every validated diff and decision, queryable weeks later. “Did we agree on snake_case here?” - get the actual verdict.",
+    body: "Every validated diff and decision, queryable weeks later. “Did we agree on snake_case here?” Get the actual verdict.",
   },
   {
     n: "03",
@@ -25,7 +25,7 @@ const layers = [
     n: "04",
     name: "Semantic",
     tag: "the unwritten rules",
-    body: "Invariants and conventions mined from the import graph - not declared by humans, discovered from how the code actually connects.",
+    body: "Invariants and conventions mined from the import graph, not declared by humans, discovered from how the code actually connects.",
   },
   {
     n: "05",
@@ -53,7 +53,7 @@ export function Inside() {
             </h2>
             <p className="mt-6 text-[1rem] leading-relaxed text-ink-2">
               Your AI tool sees files. Carto’s container sees architecture,
-              history, and consequences - five layers, packed into one SQLite
+              history, and consequences: five layers, packed into one SQLite
               file and exposed to any tool over MCP.
             </p>
           </div>

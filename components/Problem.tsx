@@ -18,7 +18,7 @@ export function Problem() {
           </p>
           <p className="mt-6 max-w-2xl text-[1rem] leading-relaxed text-ink-2">
             Cursor builds its own index. Copilot builds its own. Claude Code
-            builds its own. Same parsing, every tool, every time - and none of
+            builds its own. Same parsing, every tool, every time, and none of
             them remember what they learned yesterday. An index is a snapshot
             of right now, thrown away at the end of the session. A container is
             portable, versioned, and remembers.

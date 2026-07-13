@@ -18,11 +18,11 @@ export function Portable() {
               <span className="text-route">not a lock-in.</span>
             </h2>
             <p className="mt-6 text-[1rem] leading-relaxed text-ink-2">
-              The container is a portable artifact -{" "}
+              The container is a portable artifact,{" "}
               <span className="font-mono text-[0.9em] text-ink">.carto/anci.&#123;yaml,bin&#125;</span>{" "}
-              - with a verifiable identity: source commit, tree hash, pinned
+              with a verifiable identity: source commit, tree hash, pinned
               grammar versions, and a sha256 content digest. Same repo → same
-              digest. Build it on one machine, load it on another - the digest
+              digest. Build it on one machine, load it on another. The digest
               is checked on load, and every AI tool reads it with zero re-index.
             </p>
           </div>
@@ -38,7 +38,7 @@ export function Portable() {
                   {[
                     ["carto init", "parse the repo → build the container", "map"],
                     ["carto export --out myrepo.anci", "pack yaml + bitmap + manifest into one file", "box"],
-                    ["carto load myrepo.anci", "unpack on any machine - no re-index, digest verified", "pull"],
+                    ["carto load myrepo.anci", "unpack on any machine, no re-index, digest verified", "pull"],
                   ].map(([cmd, desc], i) => (
                     <div key={cmd} className="flex items-center gap-4 bg-panel py-3">
                       <span className="font-mono text-[0.7rem] text-ink-3">{String(i + 1).padStart(2, "0")}</span>
@@ -51,7 +51,7 @@ export function Portable() {
                 </div>
                 <p className="mt-6 border-t border-line pt-5 text-[0.86rem] leading-relaxed text-ink-2">
                   Loaded containers are treated as untrusted data, never
-                  instructions - portability without a prompt-injection hole.
+                  instructions: portability without a prompt-injection hole.
                 </p>
               </div>
             </Card>
@@ -91,7 +91,7 @@ c.getHighImpactFiles(5);
             <div className="flex flex-wrap items-end justify-between gap-4">
               <p className="max-w-xl text-[0.95rem] leading-relaxed text-ink-2">
                 The container is a CLI you live in, not a black box. Everyday
-                commands answer questions straight from the map - and{" "}
+                commands answer questions straight from the map, and{" "}
                 <span className="font-mono text-[0.9em] text-ink">pr-impact</span>{" "}
                 shapes the blast radius between two refs, so it drops straight
                 into CI.
@@ -121,7 +121,7 @@ c.getHighImpactFiles(5);
 
             <p className="mt-6 border-t border-line pt-5 font-mono text-[0.72rem] text-ink-2">
               <span className="text-route">↳ multi-repo</span> · load many
-              containers side by side - monorepos and org-wide, one map per repo,
+              containers side by side: monorepos and org-wide, one map per repo,
               queried together.
             </p>
           </div>

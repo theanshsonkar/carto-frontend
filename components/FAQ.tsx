@@ -10,11 +10,11 @@ import { Reveal } from "./ui/Reveal";
 const faqs: [string, React.ReactNode][] = [
   [
     "Does my code ever leave my machine?",
-    "No. Carto is local-only - a SQLite database plus an open ANCI file inside a .carto/ folder on your disk. No cloud, no account, no telemetry, ever. .cartoignore blocks .env and credential files by default.",
+    "No. Carto is local-only: a SQLite database plus an open ANCI file inside a .carto/ folder on your disk. No cloud, no account, no telemetry, ever. .cartoignore blocks .env and credential files by default.",
   ],
   [
     "Which AI tools does it work with?",
-    "Any MCP client - Cursor, Claude Code, Copilot, Kiro, Zed, Windsurf, JetBrains and more are auto-wired when you run carto init. Or read the ANCI file directly with zero Carto runtime.",
+    "Any MCP client: Cursor, Claude Code, Copilot, Kiro, Zed, Windsurf, JetBrains and more are auto-wired when you run carto init. Or read the ANCI file directly with zero Carto runtime.",
   ],
   [
     "Will it understand my stack?",
@@ -22,15 +22,15 @@ const faqs: [string, React.ReactNode][] = [
   ],
   [
     "How does the container stay fresh?",
-    "It auto-syncs on git events - commit, checkout, merge and rebase - and re-syncs are incremental, under a second on every repo we benchmark. If the repo moves ahead of the index, queries warn that the graph is stale instead of answering with old data.",
+    "It auto-syncs on git events: commit, checkout, merge and rebase, and re-syncs are incremental, under a second on every repo we benchmark. If the repo moves ahead of the index, queries warn that the graph is stale instead of answering with old data.",
   ],
   [
     "Does it work across multiple repos?",
-    "Yes. Load many containers side by side for monorepos or org-wide setups - one map per repo, queried together.",
+    "Yes. Load many containers side by side for monorepos or org-wide setups: one map per repo, queried together.",
   ],
   [
     "Is this Docker?",
-    "No. Docker containerizes compute - the OS and binaries a CPU needs. Carto containerizes context - the import graph, blast radius and structural boundaries an LLM needs to reason about your code without re-reading it. No daemon, no image pull.",
+    "No. Docker containerizes compute: the OS and binaries a CPU needs. Carto containerizes context: the import graph, blast radius and structural boundaries an LLM needs to reason about your code without re-reading it. No daemon, no image pull.",
   ],
   [
     "How much does it cost?",

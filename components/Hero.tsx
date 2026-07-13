@@ -32,21 +32,22 @@ export function Hero() {
         <div className="rise min-w-0">
           <span className="inline-flex max-w-full items-center gap-2.5 border border-line bg-panel px-3 py-1.5 font-mono text-[0.72rem] tracking-[0.02em] text-ink-2">
             <span className="h-1.5 w-1.5 shrink-0 bg-route softpulse" aria-hidden />
-            The portable AI container for your codebase
+            AI writes faster than you can verify
           </span>
 
           <h1 className="mt-8 max-w-2xl font-display font-medium text-ink [font-size:var(--text-display)] [letter-spacing:var(--text-display--letter-spacing)] [line-height:var(--text-display--line-height)]">
             Package a repo once.
             <br />
-            <span className="text-route">Every AI understands it.</span>
+            <span className="text-route">Every AI knows what breaks.</span>
           </h1>
 
           <p className="mt-7 max-w-xl text-lg leading-relaxed text-ink-2">
-            Carto packs your whole codebase into one portable container -
-            architecture, dependencies, history, and safety context. Any AI
-            tool reads it in seconds instead of re-indexing from scratch, and
-            because the container knows how everything connects, it tells you{" "}
-            <span className="text-ink">what breaks before you change it.</span>
+            Your agent can change 40 files before you understand the first
+            one. Tests catch broken behavior. Linters catch broken syntax.
+            Neither sees what it did to the{" "}
+            <span className="text-ink">shape of your system.</span> Carto packs
+            that into one portable container, so any AI tool knows{" "}
+            <span className="text-ink">what breaks before the diff lands.</span>
           </p>
 
           <div className="mt-9 flex flex-col items-start gap-3 sm:flex-row sm:items-center">

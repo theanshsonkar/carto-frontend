@@ -24,10 +24,17 @@ export function CTA() {
           <span className="flex items-center overflow-x-auto whitespace-nowrap px-4 py-3 text-paper sm:px-5">npm i -g carto-md && carto init</span>
         </div>
 
-        <div className="mt-8 flex flex-col items-center gap-4">
+        <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row">
+          <a
+            href="/package"
+            className="inline-flex h-12 items-center justify-center gap-2.5 border border-paper bg-paper px-8 text-sm font-medium text-route transition-colors hover:bg-transparent hover:text-paper"
+          >
+            Package a public repo
+            <span aria-hidden>→</span>
+          </a>
           <a
             href="https://github.com/theanshsonkar/carto"
-            className="inline-flex h-12 items-center justify-center gap-2.5 border border-paper bg-paper px-8 text-sm font-medium text-route transition-colors hover:bg-transparent hover:text-paper"
+            className="inline-flex h-12 items-center justify-center gap-2.5 border border-paper/40 px-8 text-sm font-medium text-paper transition-colors hover:border-paper"
           >
             View on GitHub
             <span aria-hidden>↗</span>

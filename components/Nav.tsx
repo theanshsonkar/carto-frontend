@@ -5,12 +5,10 @@ import Link from "next/link";
 import { ContainerMark } from "@/components/ui/Logo";
 
 const LINKS: [string, string][] = [
-  ["Container", "#container"],
+  ["Verify gap", "#verify-gap"],
   ["Blast radius", "#blast"],
-  ["Guardrail", "#guardrail"],
   ["Portable", "#portable"],
-  ["Speed", "#speed"],
-  ["Docs", "https://github.com/theanshsonkar/carto"],
+  ["Boarding pass", "/package"],
 ];
 
 const REPO = "https://github.com/theanshsonkar/carto";
