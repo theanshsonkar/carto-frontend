@@ -28,6 +28,7 @@ function steps(repo: string): Line[] {
 export default function ResultPage() {
   const [phase, setPhase] = useState<Phase>("loading");
   const [passport, setPassport] = useState<Passport | null>(null);
+  const [repo, setRepo] = useState("");
   const [lines, setLines] = useState<Line[]>([]);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
@@ -38,6 +39,7 @@ export default function ResultPage() {
       setPhase("empty");
       return;
     }
+    setRepo(repo);
     setPhase("scanning");
     let cancelled = false;
 
@@ -86,7 +88,7 @@ export default function ResultPage() {
           <div className="relative w-full px-4 py-6 md:px-6 md:py-8">
             {phase === "empty" && <Empty />}
 
-            {phase === "scanning" && passport && <Scan lines={lines} repo={passport.repo} />}
+            {phase === "scanning" && <Scan lines={lines} repo={passport?.repo ?? repo} />}
 
             {phase === "done" && passport && (
               <PassportStage className="space-y-8">

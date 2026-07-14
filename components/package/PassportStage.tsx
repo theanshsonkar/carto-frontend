@@ -26,15 +26,26 @@ export function PassportStage({ children, className }: { children: ReactNode; cl
         return;
       }
 
-      items.forEach((el) => {
+      items.forEach((el, i) => {
         gsap.set(el, { opacity: 0, y: 22 });
-        ScrollTrigger.create({
-          trigger: el,
-          start: "top 88%",
-          once: true,
-          onEnter: () => gsap.to(el, { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" }),
-        });
+        // This stage mounts on a phase change (scan → done), NOT a fresh page
+        // load, so ScrollTrigger's onEnter can miss an element that is already
+        // in the viewport — leaving the above-the-fold boarding pass stuck at
+        // opacity:0. So reveal anything already on-screen immediately, and only
+        // defer the below-the-fold blocks to their scroll trigger.
+        const inView = el.getBoundingClientRect().top < window.innerHeight * 0.88;
+        if (inView) {
+          gsap.to(el, { opacity: 1, y: 0, duration: 0.55, ease: "power3.out", delay: i * 0.08 });
+        } else {
+          ScrollTrigger.create({
+            trigger: el,
+            start: "top 88%",
+            once: true,
+            onEnter: () => gsap.to(el, { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" }),
+          });
+        }
       });
+      ScrollTrigger.refresh();
     },
     { scope }
   );
