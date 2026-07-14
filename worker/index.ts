@@ -12,7 +12,7 @@
  * a render failure can never take the site down.
  */
 import { ImageResponse } from "workers-og";
-import { resolvePassport, type Passport } from "../components/package/passport-data";
+import { resolvePassport, finalize, type Passport, type PassportCore } from "../components/package/passport-data";
 import { boardingPassHtml } from "./boarding-pass-og";
 import { fetchPassportFromBackend } from "./passport-api";
 import sgBold from "./fonts/SpaceGrotesk-Bold.ttf";
@@ -38,15 +38,15 @@ const FONTS = [
 const num = (n: number) => Math.round(n).toLocaleString("en-US");
 
 /** Bump this whenever the image template changes so cached PNGs are invalidated. */
-const TEMPLATE_VERSION = "4";
+const TEMPLATE_VERSION = "5";
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
     try {
       if (url.pathname === "/api/passport") return await handlePassportApi(request, env, url, ctx);
-      if (url.pathname === "/r.png") return await renderImage(url, ctx);
-      if (url.pathname === "/r") return await injectMeta(request, env, url);
+      if (url.pathname === "/r.png") return await renderImage(url, env, ctx);
+      if (url.pathname === "/r") return await injectMeta(request, env, url, ctx);
     } catch (err) {
       console.error("[worker] fallthrough after error:", err);
     }
@@ -128,12 +128,50 @@ async function allowRequest(ip: string, limit = 40, windowSec = 60): Promise<boo
   }
 }
 
+/**
+ * Resolve a repo's PassportCore the SAME way the /r page does — from the
+ * backend — so the shared image and unfurl can never disagree with the page.
+ * Reuses the exact edge-cache key handlePassportApi writes, so a page view and
+ * a social-crawler image hit share one cached backend result (≈ no extra AWS
+ * calls in the common case). Returns null when the backend isn't "done" (cold
+ * first parse) or is unreachable, so callers fall back to the deterministic
+ * generator and the image always renders.
+ */
+async function resolveCore(repo: string, env: Env, ctx: ExecutionContext): Promise<PassportCore | null> {
+  const cache = caches.default;
+  const cacheKey = new Request(`https://cache.local/api/passport?repo=${encodeURIComponent(repo)}`);
+  try {
+    const hit = await cache.match(cacheKey);
+    if (hit) {
+      const data = (await hit.json().catch(() => null)) as { status?: string; core?: PassportCore } | null;
+      if (data?.status === "done" && data.core) return data.core;
+    }
+    const { httpStatus, body } = await fetchPassportFromBackend(repo, env);
+    const b = body as { status?: string; core?: PassportCore };
+    if (httpStatus === 200 && b?.status === "done" && b.core) {
+      // Populate the shared cache so page + image + meta all reuse this result.
+      const cacheable = new Response(JSON.stringify(b), {
+        status: 200,
+        headers: { "content-type": "application/json", "cache-control": "public, max-age=3600" },
+      });
+      ctx.waitUntil(cache.put(cacheKey, cacheable));
+      return b.core;
+    }
+  } catch (err) {
+    console.error("[worker] resolveCore fell back to generator:", err);
+  }
+  return null;
+}
+
 /** Render /r.png?repo=... as the boarding-pass PNG, cached hard by repo+digest. */
-async function renderImage(url: URL, ctx: ExecutionContext): Promise<Response> {
+async function renderImage(url: URL, env: Env, ctx: ExecutionContext): Promise<Response> {
   const repo = (url.searchParams.get("repo") || "").trim();
   if (!repo) return new Response("missing ?repo", { status: 400 });
 
-  const p = resolvePassport(repo);
+  // Same source of truth as the /r page: backend core → finalize; generator only
+  // as a last resort so the image always renders.
+  const core = await resolveCore(repo, env, ctx);
+  const p = core ? finalize(core) : resolvePassport(repo);
 
   const cache = caches.default;
   const cacheKey = new Request(
@@ -158,13 +196,15 @@ async function renderImage(url: URL, ctx: ExecutionContext): Promise<Response> {
 }
 
 /** Serve the static /r HTML but swap in per-repo OG/Twitter meta. */
-async function injectMeta(request: Request, env: Env, url: URL): Promise<Response> {
+async function injectMeta(request: Request, env: Env, url: URL, ctx: ExecutionContext): Promise<Response> {
   const assetRes = await env.ASSETS.fetch(request);
   const repo = (url.searchParams.get("repo") || "").trim();
   const ct = assetRes.headers.get("content-type") || "";
   if (!repo || !ct.includes("text/html")) return assetRes;
 
-  const p = resolvePassport(repo);
+  // Same source of truth as the /r page + the /r.png image.
+  const core = await resolveCore(repo, env, ctx);
+  const p = core ? finalize(core) : resolvePassport(repo);
   const image = `${url.origin}/r.png?repo=${encodeURIComponent(repo)}`;
   const pageUrl = `${url.origin}/r?repo=${encodeURIComponent(repo)}`;
   const title = `${p.repo}: ${p.grade} on Carto`;
