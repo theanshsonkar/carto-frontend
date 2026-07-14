@@ -38,7 +38,7 @@ const FONTS = [
 const num = (n: number) => Math.round(n).toLocaleString("en-US");
 
 /** Bump this whenever the image template changes so cached PNGs are invalidated. */
-const TEMPLATE_VERSION = "1";
+const TEMPLATE_VERSION = "4";
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
