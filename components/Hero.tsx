@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { normalizeRepo } from "@/components/package/passport-data";
 
 /**
  * Hero - the pitch on the left, the container "manifest" card on the right.
@@ -10,12 +11,25 @@ import { useEffect, useRef, useState } from "react";
  */
 export function Hero() {
   const [copied, setCopied] = useState(false);
+  const [repoUrl, setRepoUrl] = useState("");
+  const [repoErr, setRepoErr] = useState<string | null>(null);
 
   function copyInstall() {
     navigator.clipboard?.writeText("npm i -g carto-md").then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
     });
+  }
+
+  // "Get your pass" — reuse the same normalize + hard-navigate contract as the
+  // /package console, so the /r URL gets the correct per-repo OG meta.
+  function getPass(raw: string) {
+    const repo = normalizeRepo(raw);
+    if (!repo) {
+      setRepoErr("Enter a GitHub URL or owner/repo, e.g. vercel/next.js");
+      return;
+    }
+    window.location.assign(`/r?repo=${encodeURIComponent(repo)}`);
   }
 
   return (
@@ -50,8 +64,46 @@ export function Hero() {
             <span className="text-ink">what breaks before the diff lands.</span>
           </p>
 
-          <div className="mt-9 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
-            {/* primary CTA — the install command itself, in route blue */}
+          {/* primary CTA — get your pass (interactive scan, no install) */}
+          <form
+            className="mt-9 max-w-xl"
+            onSubmit={(e) => {
+              e.preventDefault();
+              getPass(repoUrl);
+            }}
+          >
+            <div className="flex h-12 items-stretch border border-ink bg-panel shadow-hard transition-shadow focus-within:shadow-hard-lg">
+              <span aria-hidden className="flex items-center border-r border-line px-3 font-mono text-[0.76rem] text-ink-3">
+                github.com/
+              </span>
+              <input
+                value={repoUrl}
+                onChange={(e) => setRepoUrl(e.target.value)}
+                placeholder="vercel/next.js"
+                aria-label="Public GitHub repository"
+                className="min-w-0 flex-1 bg-transparent px-3 font-mono text-[0.85rem] text-ink outline-none placeholder:text-ink-3"
+              />
+              <button
+                type="submit"
+                className="flex shrink-0 items-center whitespace-nowrap bg-route px-4 font-mono text-[0.82rem] font-medium text-paper transition-colors hover:bg-route-strong"
+              >
+                Get your pass →
+              </button>
+            </div>
+            {repoErr ? (
+              <p className="mt-2 font-mono text-[0.72rem] text-signal">{repoErr}</p>
+            ) : (
+              <p className="mt-2 font-mono text-[0.72rem] text-ink-3">
+                free · no install · any public repo → a shareable boarding pass
+              </p>
+            )}
+          </form>
+
+          {/* secondary CTA — install the CLI */}
+          <p className="mt-7 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-ink-3">
+            or bring it to your editor
+          </p>
+          <div className="mt-2 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
             <div
               id="install"
               className="flex h-12 max-w-full items-stretch border border-route bg-route font-mono text-[0.82rem] text-paper sm:text-[0.9rem]"
