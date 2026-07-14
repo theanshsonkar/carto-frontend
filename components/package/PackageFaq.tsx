@@ -9,6 +9,22 @@ import { Reveal } from "../ui/Reveal";
 
 const faqs: [string, React.ReactNode][] = [
   [
+    "I already use Cursor or Copilot — what does Carto add?",
+    "They each build their own index of your repo and throw it away when the tab closes. Carto packages the repo once into a container every tool shares, so your AI starts each session already knowing your architecture, blast radius and past decisions, instead of re-reading 40 files to guess.",
+  ],
+  [
+    "Can it actually stop my AI from making a risky change?",
+    "Yes. Carto grades every diff your AI proposes for risk and boundary violations before you ever see it, and the MCP middleware can block a HIGH-risk edit before it reaches disk. It's a guardrail that pushes back, not a report you read after the damage is done.",
+  ],
+  [
+    "How is this different from my tests and linter?",
+    "Tests catch broken behavior. Linters catch broken syntax. Neither sees what a change did to the shape of your system. Carto shows the blast radius: touch one file and it names the files that break, transitively, before the diff lands.",
+  ],
+  [
+    "Does it remember what we decided last week?",
+    "Yes. Every decision and validated diff is saved in one local SQLite file. Ask \u201Cdid we agree on snake_case here?\u201D six weeks later and you get the actual verdict, not a fresh guess. The container gets smarter the longer the repo lives.",
+  ],
+  [
     "What exactly is a boarding pass?",
     "It is Carto's one-page container for a repo: its archetype, a structural grade, the worst blast radius, cross-domain coupling, domains and predictive risk. The same container your AI reads so it knows what breaks before it edits.",
   ],
