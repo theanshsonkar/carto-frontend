@@ -204,47 +204,47 @@ export function scoreCard(core: PassportCore): ScoreCard {
   const blast = blastRatio(core); // worst blast / total files
   const lines: ScoreLine[] = [];
 
-  // 1. Domain balance — always on. >40% in one domain starts to hurt.
-  if (c.pct <= 40) {
+  // 1. Domain balance — always on. >45% in one domain starts to hurt.
+  if (c.pct <= 45) {
     lines.push({
       label: "domain balance",
-      pts: Math.round(((40 - c.pct) / 40) * 8), // up to +8
+      pts: Math.round(((45 - c.pct) / 45) * 6), // up to +6
       detail: `${c.pct}% in ${c.name}, well distributed`,
     });
   } else {
     lines.push({
       label: "domain concentration",
-      pts: -Math.round(clampN((c.pct - 40) / 60, 0, 1) * 12), // down to −12
+      pts: -Math.round(clampN((c.pct - 45) / 55, 0, 1) * 10), // down to −10
       detail: `${c.pct}% of ${core.files.toLocaleString()} files in ${c.name}`,
     });
   }
 
   // 2. Boundary hygiene — always on. Measured per-file so size is fair.
-  if (leaksPerFile <= 0.02) {
+  if (leaksPerFile <= 0.10) {
     lines.push({
       label: "boundary hygiene",
-      pts: Math.round(((0.02 - leaksPerFile) / 0.02) * 6), // up to +6
+      pts: Math.round(((0.10 - leaksPerFile) / 0.10) * 5), // up to +5
       detail: `${core.crossDomain} cross-domain imports, tight boundaries`,
     });
   } else {
     lines.push({
       label: "boundary leaks",
-      pts: -Math.round(clampN((leaksPerFile - 0.02) / 0.08, 0, 1) * 12), // down to −12
+      pts: -Math.round(clampN((leaksPerFile - 0.10) / 0.6, 0, 1) * 10), // down to −10
       detail: `${core.crossDomain} cross-domain imports (${core.topCoupling.from}→${core.topCoupling.to} ${core.topCoupling.count}×)`,
     });
   }
 
-  // 3. Blast containment — always on. Under 3% of the repo = SAFE (Carto's line).
-  if (blast < 0.03) {
+  // 3. Blast containment — always on. Under 8% of the repo = SAFE (Carto's line).
+  if (blast < 0.08) {
     lines.push({
       label: "blast containment",
-      pts: Math.round(((0.03 - blast) / 0.03) * 6), // up to +6
-      detail: `worst file breaks ${core.blast.count}, under 3%, rated SAFE`,
+      pts: Math.round(((0.08 - blast) / 0.08) * 5), // up to +5
+      detail: `worst file breaks ${core.blast.count}, under 8%, rated SAFE`,
     });
   } else {
     lines.push({
       label: "blast radius",
-      pts: -Math.round(clampN((blast - 0.03) / 0.06, 0, 1) * 10), // down to −10
+      pts: -Math.round(clampN((blast - 0.08) / 0.35, 0, 1) * 9), // down to −9
       detail: `${baseName(core.blast.file)} → ${core.blast.count} files break`,
     });
   }
@@ -702,15 +702,20 @@ export type Archetype = { title: string; blurb: string; emoji: string };
 export function archetype(p: PassportCore): Archetype {
   const ratio = blastRatio(p);
   const c = concentration(p);
-  if (ratio > 0.05 && p.health < 78)
-    return { title: "THE HOUSE OF CARDS", blurb: "One file holds the whole thing together. Touch it and pray.", emoji: "🃏" };
-  if (p.health >= 85)
-    return { title: "THE FORTRESS", blurb: "Clean boundaries, low blast radius. Your AI sleeps easy here.", emoji: "🏰" };
-  if (c.pct >= 80 && p.files > 5000)
+  // Reward the well-structured first: strong health + a contained worst file.
+  if (p.health >= 82 && ratio < 0.15)
+    return { title: "THE FORTRESS", blurb: "Clean boundaries, contained blast radius. Your AI sleeps easy here.", emoji: "🏰" };
+  // One dominant domain in a sizable repo = a monolith, whatever the grade.
+  if (c.pct >= 70 && p.files > 1500)
     return { title: "THE MONOLITH", blurb: `${c.pct}% of the repo lives in one domain. Massive, dense, unbothered.`, emoji: "🗿" };
+  // Many loosely-allied domains.
   if (p.domainsCount >= 8)
     return { title: "THE FEDERATION", blurb: "A sprawling world of many kingdoms, loosely allied.", emoji: "🌐" };
-  if (p.risk >= 0.45)
+  // Genuinely fragile: one file breaks a third of the repo AND weak health.
+  if (ratio > 0.35 && p.health < 70)
+    return { title: "THE HOUSE OF CARDS", blurb: "One file holds the whole thing together. Touch it and pray.", emoji: "🃏" };
+  // Tall and risky: high predictive risk or a still-large blast radius.
+  if (p.risk >= 0.5 || ratio > 0.18)
     return { title: "THE JENGA TOWER", blurb: "Impressive height. Questionable stability. Move carefully.", emoji: "🧱" };
   return { title: "THE EXPLORER", blurb: "Balanced, curious, still finding its shape. Room to grow.", emoji: "🧭" };
 }
