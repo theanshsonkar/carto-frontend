@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
@@ -26,25 +27,53 @@ function steps(repo: string): Line[] {
 }
 
 export default function ResultPage() {
+  return (
+    <>
+      <Nav />
+      <main className="flex-1">
+        <section className="relative overflow-hidden">
+          <div aria-hidden className="bp-grid pointer-events-none absolute inset-0 opacity-50" />
+          <div className="relative w-full px-4 py-6 md:px-6 md:py-8">
+            {/* useSearchParams needs a Suspense boundary under static export. */}
+            <Suspense fallback={null}>
+              <RepoResult />
+            </Suspense>
+          </div>
+        </section>
+      </main>
+      <Footer />
+    </>
+  );
+}
+
+/**
+ * Reads the (reactive) ?repo param and keys the scanner by it. The `key` is the
+ * fix for stale results: when you scan a second repo, the query string changes,
+ * so Scanner fully REMOUNTS with fresh state and re-runs its scan — instead of
+ * the App Router reusing the old instance (which showed the previous repo's
+ * boarding pass instantly).
+ */
+function RepoResult() {
+  const repo = useSearchParams().get("repo") ?? "";
+  return <Scanner key={repo} repoParam={repo} />;
+}
+
+function Scanner({ repoParam }: { repoParam: string }) {
   const [phase, setPhase] = useState<Phase>("loading");
   const [passport, setPassport] = useState<Passport | null>(null);
-  const [repo, setRepo] = useState("");
   const [lines, setLines] = useState<Line[]>([]);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const repo = params.get("repo");
-    if (!repo) {
+    if (!repoParam) {
       setPhase("empty");
       return;
     }
-    setRepo(repo);
     setPhase("scanning");
     let cancelled = false;
 
     // Animate the intermediate parse lines while the real backend works.
-    const seq = steps(repo);
+    const seq = steps(repoParam);
     seq.forEach((s, i) => {
       const t = setTimeout(() => {
         if (!cancelled) setLines((prev) => [...prev, s]);
@@ -54,7 +83,7 @@ export default function ResultPage() {
 
     // Fetch the REAL cached passport (polls a first-time parse, falls back to
     // the generator on error/timeout so the page always resolves).
-    resolvePassportAsync(repo, {
+    resolvePassportAsync(repoParam, {
       onRunning: () => {
         if (cancelled) return;
         setLines((prev) =>
@@ -76,42 +105,34 @@ export default function ResultPage() {
     return () => {
       cancelled = true;
       timers.current.forEach(clearTimeout);
+      timers.current = [];
     };
-  }, []);
+  }, [repoParam]);
 
-  return (
-    <>
-      <Nav />
-      <main className="flex-1">
-        <section className="relative overflow-hidden">
-          <div aria-hidden className="bp-grid pointer-events-none absolute inset-0 opacity-50" />
-          <div className="relative w-full px-4 py-6 md:px-6 md:py-8">
-            {phase === "empty" && <Empty />}
+  if (phase === "empty") return <Empty />;
 
-            {phase === "scanning" && <Scan lines={lines} repo={passport?.repo ?? repo} />}
+  if (phase === "done" && passport) {
+    return (
+      <PassportStage className="space-y-8">
+        <div data-reveal>
+          <BoardingPass p={passport} />
+        </div>
+        <div data-reveal>
+          <Wrapped p={passport} />
+        </div>
+        <div data-reveal>
+          <AiBrief p={passport} />
+        </div>
+        <div data-reveal>
+          <PassportFaq p={passport} />
+        </div>
+      </PassportStage>
+    );
+  }
 
-            {phase === "done" && passport && (
-              <PassportStage className="space-y-8">
-                <div data-reveal>
-                  <BoardingPass p={passport} />
-                </div>
-                <div data-reveal>
-                  <Wrapped p={passport} />
-                </div>
-                <div data-reveal>
-                  <AiBrief p={passport} />
-                </div>
-                <div data-reveal>
-                  <PassportFaq p={passport} />
-                </div>
-              </PassportStage>
-            )}
-          </div>
-        </section>
-      </main>
-      <Footer />
-    </>
-  );
+  // "loading" (first paint before the effect runs) and "scanning" both show the
+  // console; repoParam is always known here so it renders immediately.
+  return <Scan lines={lines} repo={passport?.repo ?? repoParam} />;
 }
 
 function Scan({ lines, repo }: { lines: Line[]; repo: string }) {

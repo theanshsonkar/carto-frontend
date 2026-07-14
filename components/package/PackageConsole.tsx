@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { normalizeRepo, PRESET_REPOS } from "./passport-data";
 
 /**
@@ -9,9 +8,15 @@ import { normalizeRepo, PRESET_REPOS } from "./passport-data";
  * shareable passport page at /r?repo=owner/name, which plays the scan and
  * reveals the Wrapped card. Keeping the result on its own URL is the whole
  * point — that link is the shareable artifact.
+ *
+ * Navigation is a HARD load (window.location), not router.push. Two reasons:
+ *   1. Correctness — App Router's client push, after a back-navigation, could
+ *      traverse to a cached forward entry on the /r segment instead of the new
+ *      repo, so scanning a 2nd repo showed the 1st repo's boarding pass.
+ *   2. Bonus — a real navigation lets the Cloudflare Worker inject the correct
+ *      per-repo OG/Twitter meta for that /r URL (client push never runs it).
  */
 export function PackageConsole() {
-  const router = useRouter();
   const [url, setUrl] = useState("");
   const [error, setError] = useState<string | null>(null);
 
@@ -21,7 +26,7 @@ export function PackageConsole() {
       setError("Enter a GitHub URL or owner/repo, e.g. vercel/next.js");
       return;
     }
-    router.push(`/r?repo=${encodeURIComponent(repo)}`);
+    window.location.assign(`/r?repo=${encodeURIComponent(repo)}`);
   }
 
   return (
