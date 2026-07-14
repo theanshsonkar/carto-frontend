@@ -10,10 +10,10 @@ import { Reveal } from "../ui/Reveal";
 const faqs: [string, React.ReactNode][] = [
   [
     "So it's just shared context across my AI tools?",
-    "No — that's the least of it. Carto is the layer between your codebase and your AI. Your repo becomes a portable container that sits in the path: every change your AI tool proposes passes through it, gets graded, and the dangerous ones are blocked before they reach disk. A plain index is passive context you hope the AI reads. Carto is context that pushes back.",
+    "No, that's the least of it. Carto is the layer between your codebase and your AI. Your repo becomes a portable container that sits in the path: every change your AI tool proposes passes through it, gets graded, and the dangerous ones are blocked before they reach disk. A plain index is passive context you hope the AI reads. Carto is context that pushes back.",
   ],
   [
-    "I already use Cursor or Copilot — what does Carto add?",
+    "I already use Cursor or Copilot. What does Carto add?",
     "They each build their own index of your repo and throw it away when the tab closes. Carto packages the repo once into a container every tool shares, so your AI starts each session already knowing your architecture, blast radius and past decisions, instead of re-reading 40 files to guess.",
   ],
   [
