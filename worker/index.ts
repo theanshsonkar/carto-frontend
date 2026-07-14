@@ -205,7 +205,12 @@ async function injectMeta(request: Request, env: Env, url: URL, ctx: ExecutionCo
   // Same source of truth as the /r page + the /r.png image.
   const core = await resolveCore(repo, env, ctx);
   const p = core ? finalize(core) : resolvePassport(repo);
-  const image = `${url.origin}/r.png?repo=${encodeURIComponent(repo)}`;
+  // Content token: makes the image URL CHANGE when the repo's content (digest)
+  // or the template changes. Without it, Twitter/Slack/iMessage/GitHub-camo keep
+  // serving the PNG they cached under the old constant URL (sent immutable,
+  // 7-day), so a fixed pass would never reach an already-shared link.
+  const imgV = p.digest.replace(/[^a-z0-9]/gi, "").slice(-8) || "1";
+  const image = `${url.origin}/r.png?repo=${encodeURIComponent(repo)}&v=${TEMPLATE_VERSION}&d=${imgV}`;
   const pageUrl = `${url.origin}/r?repo=${encodeURIComponent(repo)}`;
   const title = `${p.repo}: ${p.grade} on Carto`;
   const desc = metaDescription(p);

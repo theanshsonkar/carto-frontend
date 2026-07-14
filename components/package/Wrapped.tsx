@@ -169,7 +169,10 @@ function ShareRow({ p }: { p: Passport }) {
   const ogv = p.digest.replace(/[^a-z0-9]/gi, "").slice(-8) || "1";
   const url = `${SITE_URL}/r?repo=${p.repo}`;
   const shareUrl = `${url}&og=${ogv}`;
-  const badge = `[![Carto boarding pass](${SITE_URL}/r.png?repo=${p.repo})](${url})`;
+  // content-token the badge image too, so GitHub's camo proxy refetches when the
+  // pass changes instead of serving a stale cached PNG under a constant URL.
+  const badgeImg = `${SITE_URL}/r.png?repo=${p.repo}&d=${ogv}`;
+  const badge = `[![Carto boarding pass](${badgeImg})](${url})`;
   const tweet = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
     `Meet ${p.repo}: ${a.title}. One change here can break ${p.blast.count} files. Carto grades that before your AI ships it. Boarding pass ↓`
   )}&url=${encodeURIComponent(shareUrl)}`;
