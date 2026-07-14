@@ -72,30 +72,28 @@ export function Hero() {
               getPass(repoUrl);
             }}
           >
-            <div className="flex h-12 items-stretch border border-ink bg-panel shadow-hard transition-shadow focus-within:shadow-hard-lg">
-              <span aria-hidden className="flex items-center border-r border-line px-3 font-mono text-[0.76rem] text-ink-3">
-                github.com/
-              </span>
-              <input
-                value={repoUrl}
-                onChange={(e) => setRepoUrl(e.target.value)}
-                placeholder="vercel/next.js"
-                aria-label="Public GitHub repository"
-                className="min-w-0 flex-1 bg-transparent px-3 font-mono text-[0.85rem] text-ink outline-none placeholder:text-ink-3"
-              />
+            <div className="flex flex-col border border-ink bg-panel shadow-hard transition-shadow focus-within:shadow-hard-lg sm:h-12 sm:flex-row sm:items-stretch">
+              <div className="flex h-12 items-stretch sm:h-auto sm:min-w-0 sm:flex-1">
+                <span aria-hidden className="flex shrink-0 items-center border-r border-line px-3 font-mono text-[0.76rem] text-ink-3">
+                  github.com/
+                </span>
+                <input
+                  value={repoUrl}
+                  onChange={(e) => setRepoUrl(e.target.value)}
+                  placeholder="vercel/next.js"
+                  aria-label="Public GitHub repository"
+                  className="min-w-0 flex-1 bg-transparent px-3 font-mono text-[0.85rem] text-ink outline-none placeholder:text-ink-3"
+                />
+              </div>
               <button
                 type="submit"
-                className="flex shrink-0 items-center whitespace-nowrap bg-route px-4 font-mono text-[0.82rem] font-medium text-paper transition-colors hover:bg-route-strong"
+                className="flex h-12 shrink-0 items-center justify-center whitespace-nowrap border-t border-ink bg-route px-4 font-mono text-[0.82rem] font-medium text-paper transition-colors hover:bg-route-strong sm:h-auto sm:justify-start sm:border-t-0"
               >
                 Get your pass →
               </button>
             </div>
-            {repoErr ? (
+            {repoErr && (
               <p className="mt-2 font-mono text-[0.72rem] text-signal">{repoErr}</p>
-            ) : (
-              <p className="mt-2 font-mono text-[0.72rem] text-ink-3">
-                no install · no account · any public repo → a shareable boarding pass
-              </p>
             )}
           </form>
 
