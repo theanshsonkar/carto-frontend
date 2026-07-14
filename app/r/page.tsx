@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Nav } from "@/components/Nav";
@@ -62,7 +62,7 @@ function Scanner({ repoParam }: { repoParam: string }) {
   const [phase, setPhase] = useState<Phase>("loading");
   const [passport, setPassport] = useState<Passport | null>(null);
   const [lines, setLines] = useState<Line[]>([]);
-  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const [elapsed, setElapsed] = useState(0);
 
   useEffect(() => {
     if (!repoParam) {
@@ -70,42 +70,62 @@ function Scanner({ repoParam }: { repoParam: string }) {
       return;
     }
     setPhase("scanning");
-    let cancelled = false;
+    setLines([]);
+    setElapsed(0);
 
-    // Animate the intermediate parse lines while the real backend works.
-    const seq = steps(repoParam);
-    seq.forEach((s, i) => {
+    let cancelled = false;
+    let resolved = false;
+    const start = Date.now();
+    const timeouts: ReturnType<typeof setTimeout>[] = [];
+    const at = (fn: () => void, ms: number) => {
       const t = setTimeout(() => {
-        if (!cancelled) setLines((prev) => [...prev, s]);
-      }, 300 + i * 320);
-      timers.current.push(t);
-    });
+        if (!cancelled) fn();
+      }, ms);
+      timeouts.push(t);
+    };
+
+    // A 1-second elapsed clock — visible proof the scan is alive even while the
+    // real backend is mid-parse and no new log line has arrived yet.
+    const clock = setInterval(() => {
+      if (!cancelled) setElapsed(Math.floor((Date.now() - start) / 1000));
+    }, 1000);
+
+    // Streamed intro steps.
+    const seq = steps(repoParam);
+    seq.forEach((s, i) => at(() => setLines((prev) => [...prev, s]), 250 + i * 260));
+
+    // Rolling activity lines so the console never sits frozen during a long
+    // first-time parse. These are the real phases the engine runs; we cycle
+    // through them until the backend resolves.
+    const activity: Line[] = [
+      { text: "→ resolving module graph", tone: "route" },
+      { text: "→ walking transitive imports", tone: "route" },
+      { text: "→ clustering domains", tone: "route" },
+      { text: "→ scoring predictive risk", tone: "route" },
+      { text: "→ building blast-radius bitmap", tone: "route" },
+      { text: "→ first parse of a large repo can take up to ~90s — hang tight", tone: "muted" },
+    ];
+    const rollFrom = (i: number) => {
+      if (cancelled || resolved) return;
+      setLines((prev) => [...prev, activity[i % activity.length]]);
+      at(() => rollFrom(i + 1), 2600);
+    };
+    at(() => rollFrom(0), 250 + seq.length * 260 + 500);
 
     // Fetch the REAL cached passport (polls a first-time parse, falls back to
     // the generator on error/timeout so the page always resolves).
-    resolvePassportAsync(repoParam, {
-      onRunning: () => {
-        if (cancelled) return;
-        setLines((prev) =>
-          prev.some((l) => l.text.includes("first parse"))
-            ? prev
-            : [...prev, { text: "→ first parse of this repo — hang tight (~1 min)…", tone: "muted" }]
-        );
-      },
-    }).then(({ passport }) => {
+    resolvePassportAsync(repoParam).then(({ passport }) => {
       if (cancelled) return;
+      resolved = true;
       setPassport(passport);
       setLines((prev) => [...prev, { text: `✓ boarding pass ready`, tone: "safe" }]);
-      const d = setTimeout(() => {
-        if (!cancelled) setPhase("done");
-      }, 600);
-      timers.current.push(d);
+      at(() => setPhase("done"), 600);
     });
 
     return () => {
       cancelled = true;
-      timers.current.forEach(clearTimeout);
-      timers.current = [];
+      clearInterval(clock);
+      timeouts.forEach(clearTimeout);
     };
   }, [repoParam]);
 
@@ -132,14 +152,18 @@ function Scanner({ repoParam }: { repoParam: string }) {
 
   // "loading" (first paint before the effect runs) and "scanning" both show the
   // console; repoParam is always known here so it renders immediately.
-  return <Scan lines={lines} repo={passport?.repo ?? repoParam} />;
+  return <Scan lines={lines} elapsed={elapsed} repo={passport?.repo ?? repoParam} />;
 }
 
-function Scan({ lines, repo }: { lines: Line[]; repo: string }) {
+function Scan({ lines, elapsed, repo }: { lines: Line[]; elapsed: number; repo: string }) {
+  const mm = String(Math.floor(elapsed / 60)).padStart(2, "0");
+  const ss = String(elapsed % 60).padStart(2, "0");
+  // Keep the console a fixed height: show the most recent lines only.
+  const visible = lines.slice(-12);
   return (
     <div className="mx-auto max-w-xl">
       <p className="text-center font-mono text-[0.8rem] uppercase tracking-[0.16em] text-ink-3">
-        packaging {repo}…
+        packaging {repo}… <span className="tabular-nums text-ink-2">{mm}:{ss}</span>
       </p>
       <div className="relative mt-6 overflow-hidden border border-ink bg-night text-night-text shadow-hard">
         <div
@@ -147,10 +171,10 @@ function Scan({ lines, repo }: { lines: Line[]; repo: string }) {
           className="pointer-events-none absolute inset-x-0 top-0 h-16 scan"
           style={{ background: "linear-gradient(to bottom, transparent, rgba(122,162,247,0.12), transparent)" }}
         />
-        <pre className="relative min-h-[168px] px-4 py-4 font-mono text-[0.78rem] leading-relaxed">
-          {lines.map((l, i) => (
+        <pre data-testid="scan-console" className="relative min-h-[168px] px-4 py-4 font-mono text-[0.78rem] leading-relaxed">
+          {visible.map((l, i) => (
             <div
-              key={i}
+              key={`${lines.length - visible.length + i}`}
               className={`fadein ${l.tone === "route" ? "text-night-route" : l.tone === "safe" ? "text-night-safe" : "text-night-muted"}`}
             >
               {l.text}
