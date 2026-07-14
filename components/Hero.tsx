@@ -94,7 +94,7 @@ export function Hero() {
               <p className="mt-2 font-mono text-[0.72rem] text-signal">{repoErr}</p>
             ) : (
               <p className="mt-2 font-mono text-[0.72rem] text-ink-3">
-                free · no install · any public repo → a shareable boarding pass
+                no install · no account · any public repo → a shareable boarding pass
               </p>
             )}
           </form>
