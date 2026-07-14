@@ -11,8 +11,8 @@ export function Footer() {
             <span className="font-display text-lg font-semibold tracking-tight">Carto</span>
           </div>
           <p className="mt-4 max-w-xs text-[0.86rem] leading-relaxed text-ink-2">
-            The portable AI container for your codebase. Package a repo once -
-            every AI tool understands it, and knows what breaks before it
+            Package your codebase into one portable container and every AI tool
+            understands how it&apos;s built, and knows what breaks before it
             changes anything.
           </p>
           <p className="mt-5 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-ink-3">
@@ -23,7 +23,7 @@ export function Footer() {
         {[
           ["Product", [["Container", "#container"], ["Blast radius", "#blast"], ["Portable", "#portable"], ["Speed", "#speed"]]],
           ["Resources", [["Docs", "https://github.com/theanshsonkar/carto/tree/main/docs"], ["Quickstart", "https://github.com/theanshsonkar/carto/blob/main/docs/quickstart.md"], ["ANCI spec", "https://github.com/theanshsonkar/carto/blob/main/docs/anci/v0.1-DRAFT.md"], ["Changelog", "https://github.com/theanshsonkar/carto/blob/main/CHANGELOG.md"]]],
-          ["Project", [["GitHub", "https://github.com/theanshsonkar/carto"], ["npm", "https://www.npmjs.com/package/carto-md"], ["License", "https://github.com/theanshsonkar/carto/blob/main/LICENSE"], ["Emfirge", "https://www.emfirge.cloud"]]],
+          ["Project", [["GitHub", "https://github.com/theanshsonkar/carto"], ["npm", "https://www.npmjs.com/package/carto-md"], ["LinkedIn", "https://www.linkedin.com/in/theanshsonkar"], ["License", "https://github.com/theanshsonkar/carto/blob/main/LICENSE"], ["Emfirge", "https://www.emfirge.cloud"]]],
         ].map(([title, links]) => (
           <div key={title as string}>
             <h4 className="font-mono text-[0.7rem] uppercase tracking-[0.16em] text-ink-3">
